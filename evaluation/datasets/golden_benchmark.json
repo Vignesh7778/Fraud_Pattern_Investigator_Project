@@ -1,0 +1,30 @@
+{
+  "benchmark_name": "FPI Golden Evaluation Suite",
+  "version": "1.0",
+  "test_cases": [
+    {
+      "case_id": "GOLD-001",
+      "transaction_id": "TXN-G001",
+      "ground_truth_label": 1,
+      "expected_pattern": "shared_device",
+      "expected_policies": ["POL-DEVICE-001"],
+      "ground_truth_fraud_reason": "Device hash shared across 5 distinct account credentials"
+    },
+    {
+      "case_id": "GOLD-002",
+      "transaction_id": "TXN-G002",
+      "ground_truth_label": 1,
+      "expected_pattern": "velocity",
+      "expected_policies": ["POL-VELOCITY-002"],
+      "ground_truth_fraud_reason": "High transaction velocity exceeding 5 txns in 5 minutes"
+    },
+    {
+      "case_id": "GOLD-003",
+      "transaction_id": "TXN-G003",
+      "ground_truth_label": 0,
+      "expected_pattern": "legitimate_shared_device",
+      "expected_policies": ["POL-DEVICE-001"],
+      "ground_truth_fraud_reason": "Legitimate household shared kiosk tablet"
+    }
+  ]
+}

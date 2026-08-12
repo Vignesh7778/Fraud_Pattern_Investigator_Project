@@ -1,0 +1,19 @@
+{
+  "model_version": "fraud-xgb-v1.0",
+  "trained_at": "2026-08-12T18:00:15.662016+00:00",
+  "train_samples": 7391,
+  "val_samples": 1585,
+  "test_samples": 1584,
+  "features": [
+    "amount",
+    "account_age_days",
+    "txns_last_1h",
+    "txns_last_24h",
+    "avg_amount_history",
+    "amount_deviation_ratio",
+    "device_account_count",
+    "ip_account_count",
+    "hour_of_day",
+    "merchant_risk_score"
+  ]
+}

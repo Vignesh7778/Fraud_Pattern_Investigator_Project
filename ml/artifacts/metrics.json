@@ -1,0 +1,42 @@
+{
+  "model_name": "XGBoost Fraud Classifier",
+  "version": "fraud-xgb-v1.0",
+  "evaluated_at": "2026-08-12T18:00:15.661147+00:00",
+  "decision_threshold": 0.5,
+  "metrics": {
+    "precision": 0.9895,
+    "recall": 0.9947,
+    "f1_score": 0.9921,
+    "roc_auc": 0.9971,
+    "pr_auc": 0.9958,
+    "confusion_matrix": [
+      [
+        1393,
+        2
+      ],
+      [
+        1,
+        188
+      ]
+    ],
+    "false_positive_rate": 0.0014
+  },
+  "baseline_logistic_regression": {
+    "precision": 1.0,
+    "recall": 0.963,
+    "f1_score": 0.9811,
+    "roc_auc": 0.9988
+  },
+  "shap_importance": {
+    "amount": 4.213970184326172,
+    "account_age_days": 0.0967315286397934,
+    "txns_last_1h": 0.6036346554756165,
+    "txns_last_24h": 0.0019495573360472918,
+    "avg_amount_history": 0.042384419590234756,
+    "amount_deviation_ratio": 0.05737796425819397,
+    "device_account_count": 0.09969163686037064,
+    "ip_account_count": 0.32828959822654724,
+    "hour_of_day": 0.06993871927261353,
+    "merchant_risk_score": 0.010794265195727348
+  }
+}
