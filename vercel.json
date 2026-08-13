@@ -1,6 +1,6 @@
 {
   "framework": "vite",
-  "buildCommand": "cd frontend && npm install && npm run build",
-  "outputDirectory": "frontend/dist",
-  "installCommand": "cd frontend && npm install"
+  "buildCommand": "node -e \"if (require('fs').existsSync('frontend')) process.chdir('frontend'); require('child_process').execSync('npm run build', {stdio: 'inherit'});\"",
+  "installCommand": "node -e \"if (require('fs').existsSync('frontend')) process.chdir('frontend'); require('child_process').execSync('npm install', {stdio: 'inherit'});\"",
+  "outputDirectory": "dist"
 }
