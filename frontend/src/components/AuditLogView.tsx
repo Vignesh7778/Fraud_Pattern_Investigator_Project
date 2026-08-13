@@ -39,7 +39,7 @@ export const AuditLogView: React.FC = () => {
   return (
     <div className="space-y-6 font-sans">
       {/* Header Banner */}
-      <div className="bg-slate-900/90 dark:bg-[#16191e] border border-slate-200 dark:border-[#2a2e37] rounded-2xl p-6 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4 transition-colors font-mono">
+      <div className="bg-white dark:bg-[#16191e] border border-slate-200 dark:border-[#2a2e37] rounded-2xl p-6 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4 transition-colors font-mono">
         <div>
           <div className="flex items-center space-x-3">
             <h1 className="text-xl font-bold text-slate-800 dark:text-slate-100">AUDIT LOG</h1>
@@ -55,7 +55,7 @@ export const AuditLogView: React.FC = () => {
       </div>
 
       {/* Filter & Search Bar */}
-      <div className="bg-slate-900/90 dark:bg-[#16191e] border border-slate-200 dark:border-[#2a2e37] rounded-2xl p-4 shadow-sm flex flex-col md:flex-row gap-4 justify-between items-center font-mono">
+      <div className="bg-white dark:bg-[#16191e] border border-slate-200 dark:border-[#2a2e37] rounded-2xl p-4 shadow-sm flex flex-col md:flex-row gap-4 justify-between items-center font-mono transition-colors">
         <div className="relative w-full md:w-80">
           <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-3" />
           <input
@@ -91,14 +91,14 @@ export const AuditLogView: React.FC = () => {
           Querying immutable audit log trail...
         </div>
       ) : logs.length === 0 ? (
-        <div className="bg-slate-900/90 dark:bg-[#16191e] border border-slate-200 dark:border-[#2a2e37] rounded-2xl p-12 text-center text-slate-400 font-mono text-xs">
+        <div className="bg-white dark:bg-[#16191e] border border-slate-200 dark:border-[#2a2e37] rounded-2xl p-12 text-center text-slate-400 font-mono text-xs">
           No audit log events match the specified search parameters.
         </div>
       ) : (
-        <div className="bg-slate-900/90 dark:bg-[#16191e] border border-slate-200 dark:border-[#2a2e37] rounded-2xl shadow-sm overflow-hidden font-mono">
+        <div className="bg-white dark:bg-[#16191e] border border-slate-200 dark:border-[#2a2e37] rounded-2xl shadow-sm overflow-hidden font-mono transition-colors">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs text-slate-700 dark:text-slate-300">
-              <thead className="bg-slate-100 dark:bg-[#0f1115] text-[10px] text-slate-500 uppercase tracking-wider border-b border-slate-200 dark:border-[#2a2e37]">
+              <thead className="bg-slate-50 dark:bg-[#0f1115] text-[10px] text-slate-500 uppercase tracking-wider border-b border-slate-200 dark:border-[#2a2e37]">
                 <tr>
                   <th className="py-3 px-4">Event ID</th>
                   <th className="py-3 px-4">Event Type</th>
@@ -110,12 +110,12 @@ export const AuditLogView: React.FC = () => {
               </thead>
               <tbody className="divide-y divide-slate-200 dark:divide-[#2a2e37]">
                 {logs.map((log, idx) => (
-                  <tr key={log.event_id || idx} className="hover:bg-slate-100 dark:hover:bg-[#1e2229] transition-colors">
+                  <tr key={log.event_id || idx} className="hover:bg-slate-50 dark:hover:bg-[#1e2229] transition-colors">
                     <td className="py-3 px-4 font-bold text-teal-700 dark:text-teal-400 font-mono">{log.event_id || `AUD-${idx+1}`}</td>
                     <td className="py-3 px-4">
                       <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                        log.event_type === 'HUMAN_DECISION' ? 'bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 border border-emerald-800/40' :
-                        log.event_type === 'TOOL_CALL' ? 'bg-teal-950/40 text-teal-700 dark:text-teal-400 border border-teal-800/40' :
+                        log.event_type === 'HUMAN_DECISION' ? 'bg-emerald-100 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/40' :
+                        log.event_type === 'TOOL_CALL' ? 'bg-teal-100 dark:bg-teal-950/40 text-teal-700 dark:text-teal-400 border border-teal-200 dark:border-teal-800/40' :
                         'bg-slate-100 dark:bg-[#0f1115] text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-[#2a2e37]'
                       }`}>
                         {log.event_type}
@@ -140,7 +140,7 @@ export const AuditLogView: React.FC = () => {
           </div>
 
           {/* Pagination Footer */}
-          <div className="p-4 bg-slate-100 dark:bg-[#0f1115] border-t border-slate-200 dark:border-[#2a2e37] flex items-center justify-between text-xs">
+          <div className="p-4 bg-slate-50 dark:bg-[#0f1115] border-t border-slate-200 dark:border-[#2a2e37] flex items-center justify-between text-xs">
             <span className="text-slate-500">Page {page + 1} • Showing {logs.length} events</span>
             <div className="flex items-center space-x-2">
               <button

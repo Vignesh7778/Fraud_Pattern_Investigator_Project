@@ -40,7 +40,7 @@ export const ReportsHistoryView: React.FC<ReportsHistoryViewProps> = ({ onSelect
   return (
     <div className="space-y-6 font-sans">
       {/* Header Banner */}
-      <div className="bg-slate-900/90 dark:bg-[#16191e] border border-slate-200 dark:border-[#2a2e37] rounded-2xl p-6 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4 transition-colors font-mono">
+      <div className="bg-white dark:bg-[#16191e] border border-slate-200 dark:border-[#2a2e37] rounded-2xl p-6 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4 transition-colors font-mono">
         <div>
           <div className="flex items-center space-x-3">
             <h1 className="text-xl font-bold text-slate-800 dark:text-slate-100">REPORTS</h1>
@@ -55,7 +55,7 @@ export const ReportsHistoryView: React.FC<ReportsHistoryViewProps> = ({ onSelect
       </div>
 
       {/* Filter & Search Bar */}
-      <div className="bg-slate-900/90 dark:bg-[#16191e] border border-slate-200 dark:border-[#2a2e37] rounded-2xl p-4 shadow-sm flex flex-col md:flex-row gap-4 justify-between items-center font-mono">
+      <div className="bg-white dark:bg-[#16191e] border border-slate-200 dark:border-[#2a2e37] rounded-2xl p-4 shadow-sm flex flex-col md:flex-row gap-4 justify-between items-center font-mono transition-colors">
         <div className="relative w-full md:w-80">
           <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-3" />
           <input
@@ -91,7 +91,7 @@ export const ReportsHistoryView: React.FC<ReportsHistoryViewProps> = ({ onSelect
           Loading report version history...
         </div>
       ) : reports.length === 0 ? (
-        <div className="bg-slate-900/90 dark:bg-[#16191e] border border-slate-200 dark:border-[#2a2e37] rounded-2xl p-12 text-center space-y-3 font-mono">
+        <div className="bg-white dark:bg-[#16191e] border border-slate-200 dark:border-[#2a2e37] rounded-2xl p-12 text-center space-y-3 font-mono">
           <ShieldAlert className="w-10 h-10 text-slate-400 mx-auto" />
           <h3 className="text-slate-800 dark:text-slate-200 font-bold text-sm">No Report Versions Found</h3>
           <p className="text-slate-500 text-xs">Try clearing search filters or generate a report via investigation run.</p>
@@ -101,17 +101,17 @@ export const ReportsHistoryView: React.FC<ReportsHistoryViewProps> = ({ onSelect
           {reports.map((rep, idx) => (
             <div
               key={rep.report_id || idx}
-              className="bg-slate-900/90 dark:bg-[#16191e] hover:bg-slate-100 dark:hover:bg-[#1e2229] border border-slate-200 dark:border-[#2a2e37] rounded-2xl p-6 space-y-4 shadow-sm transition-all"
+              className="bg-white dark:bg-[#16191e] hover:bg-slate-50 dark:hover:bg-[#1e2229] border border-slate-200 dark:border-[#2a2e37] rounded-2xl p-6 space-y-4 shadow-sm transition-all"
             >
               <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
                 <div className="flex items-center space-x-3">
                   <span className="font-extrabold text-sm text-slate-800 dark:text-slate-100">{rep.case_id}</span>
                   <span className="text-xs text-slate-500">({rep.transaction_id})</span>
-                  <span className="bg-teal-950/40 text-teal-700 dark:text-teal-400 border border-teal-800/40 text-xs px-2.5 py-0.5 rounded font-bold">
+                  <span className="bg-teal-50 dark:bg-teal-950/40 text-teal-700 dark:text-teal-400 border border-teal-200 dark:border-teal-800/40 text-xs px-2.5 py-0.5 rounded font-bold">
                     Version v{rep.version || 1}
                   </span>
                   {rep.is_current && (
-                    <span className="bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 border border-emerald-800/40 text-[10px] px-2 py-0.5 rounded font-bold">
+                    <span className="bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/40 text-[10px] px-2 py-0.5 rounded font-bold">
                       CURRENT REPORT
                     </span>
                   )}
@@ -119,10 +119,10 @@ export const ReportsHistoryView: React.FC<ReportsHistoryViewProps> = ({ onSelect
 
                 <div className="flex items-center space-x-3">
                   <span className={`px-2.5 py-0.5 rounded text-xs font-bold ${
-                    rep.risk_level === 'CRITICAL' ? 'bg-rose-950/40 text-rose-600 dark:text-rose-400 border border-rose-800/40' :
-                    rep.risk_level === 'HIGH' ? 'bg-orange-950/40 text-orange-600 dark:text-orange-400 border border-orange-800/40' :
-                    rep.risk_level === 'MEDIUM' ? 'bg-amber-950/40 text-amber-600 dark:text-amber-400 border border-amber-800/40' :
-                    'bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 border border-emerald-800/40'
+                    rep.risk_level === 'CRITICAL' ? 'bg-rose-100 dark:bg-rose-950/40 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-800/40' :
+                    rep.risk_level === 'HIGH' ? 'bg-orange-100 dark:bg-orange-950/40 text-orange-700 dark:text-orange-400 border border-orange-200 dark:border-orange-800/40' :
+                    rep.risk_level === 'MEDIUM' ? 'bg-amber-100 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800/40' :
+                    'bg-emerald-100 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/40'
                   }`}>
                     {rep.risk_level} ({rep.risk_score?.toFixed(2)})
                   </span>
@@ -130,7 +130,7 @@ export const ReportsHistoryView: React.FC<ReportsHistoryViewProps> = ({ onSelect
                 </div>
               </div>
 
-              <div className="bg-slate-100 dark:bg-[#0f1115] p-4 rounded-xl border border-slate-200 dark:border-[#2a2e37]">
+              <div className="bg-slate-50 dark:bg-[#0f1115] p-4 rounded-xl border border-slate-200 dark:border-[#2a2e37]">
                 <span className="text-[10px] text-slate-500 uppercase font-semibold block mb-1">Primary Hypothesis</span>
                 <p className="text-xs text-slate-800 dark:text-slate-200 font-sans italic">"{rep.primary_hypothesis}"</p>
               </div>

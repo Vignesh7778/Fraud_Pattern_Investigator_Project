@@ -1,5 +1,5 @@
 import React from 'react';
-import { Search, Command, Sun, Moon, Menu } from 'lucide-react';
+import { Search, Command, Sun, Moon, Menu, LogOut } from 'lucide-react';
 import { UserProfile } from '../../types';
 import { Theme } from '../../utils/theme';
 
@@ -9,6 +9,7 @@ interface TopBarProps {
   onToggleTheme: () => void;
   onOpenCommandPalette: () => void;
   onOpenMobileSidebar?: () => void;
+  onLogout?: () => void;
 }
 
 export const TopBar: React.FC<TopBarProps> = ({
@@ -16,10 +17,11 @@ export const TopBar: React.FC<TopBarProps> = ({
   theme,
   onToggleTheme,
   onOpenCommandPalette,
-  onOpenMobileSidebar
+  onOpenMobileSidebar,
+  onLogout
 }) => {
   return (
-    <header className="h-14 bg-slate-900/95 dark:bg-[#16191e]/95 border-b border-slate-200 dark:border-[#2a2e37] px-4 md:px-6 flex items-center justify-between sticky top-0 z-20 font-sans transition-colors">
+    <header className="h-14 bg-white dark:bg-[#16191e] border-b border-slate-200 dark:border-[#2a2e37] px-4 md:px-6 flex items-center justify-between sticky top-0 z-20 font-sans transition-colors">
       <div className="flex items-center space-x-3 w-full max-w-md">
         {/* Mobile Menu Trigger */}
         {onOpenMobileSidebar && (
@@ -57,20 +59,42 @@ export const TopBar: React.FC<TopBarProps> = ({
         <button
           onClick={onToggleTheme}
           title={`Switch to ${theme === 'dark' ? 'Light' : 'Dark'} Mode`}
-          className="p-2 rounded-xl bg-slate-100 dark:bg-[#0f1115] border border-slate-200 dark:border-[#2a2e37] text-slate-600 dark:text-slate-300 hover:text-teal-600 dark:hover:text-teal-400 transition-colors"
+          className="p-2 rounded-xl bg-slate-100 dark:bg-[#0f1115] border border-slate-200 dark:border-[#2a2e37] text-slate-700 dark:text-slate-200 hover:text-teal-600 dark:hover:text-teal-400 transition-colors flex items-center space-x-1 font-mono text-xs"
         >
-          {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+          {theme === 'dark' ? (
+            <>
+              <Sun className="w-4 h-4 text-amber-400" />
+              <span className="hidden sm:inline text-[11px] font-bold">Light</span>
+            </>
+          ) : (
+            <>
+              <Moon className="w-4 h-4 text-slate-700" />
+              <span className="hidden sm:inline text-[11px] font-bold">Dark</span>
+            </>
+          )}
         </button>
 
-        {/* User Profile */}
-        <div className="flex items-center space-x-2.5 bg-slate-100 dark:bg-[#0f1115] border border-slate-200 dark:border-[#2a2e37] px-2.5 md:px-3 py-1.5 rounded-xl">
-          <div className="w-6 h-6 rounded-lg bg-teal-700 dark:bg-teal-600 flex items-center justify-center font-bold text-white text-[11px] font-mono shrink-0">
-            {user.name.charAt(0)}
+        {/* User Profile & Logout */}
+        <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2.5 bg-slate-100 dark:bg-[#0f1115] border border-slate-200 dark:border-[#2a2e37] px-2.5 md:px-3 py-1.5 rounded-xl">
+            <div className="w-6 h-6 rounded-lg bg-teal-700 dark:bg-teal-600 flex items-center justify-center font-bold text-white text-[11px] font-mono shrink-0">
+              {user.name.charAt(0)}
+            </div>
+            <div className="hidden lg:block text-left font-mono">
+              <div className="text-xs font-bold text-slate-800 dark:text-slate-200">{user.name}</div>
+              <div className="text-[9px] text-slate-500 uppercase">{user.role} ({user.id})</div>
+            </div>
           </div>
-          <div className="hidden lg:block text-left font-mono">
-            <div className="text-xs font-bold text-slate-800 dark:text-slate-200">{user.name}</div>
-            <div className="text-[9px] text-slate-500 uppercase">{user.role}</div>
-          </div>
+
+          {onLogout && (
+            <button
+              onClick={onLogout}
+              title="Log Out Analyst Session"
+              className="p-2 rounded-xl bg-slate-100 dark:bg-[#0f1115] border border-slate-200 dark:border-[#2a2e37] text-slate-600 dark:text-slate-300 hover:text-rose-500 dark:hover:text-rose-400 transition-colors"
+            >
+              <LogOut className="w-4 h-4" />
+            </button>
+          )}
         </div>
       </div>
     </header>

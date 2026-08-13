@@ -38,7 +38,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   return (
     <div className="space-y-6 font-sans">
       {/* Header Banner */}
-      <div className="bg-slate-900/90 dark:bg-[#16191e] border border-slate-200 dark:border-[#2a2e37] rounded-2xl p-6 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4 transition-colors">
+      <div className="bg-white dark:bg-[#16191e] border border-slate-200 dark:border-[#2a2e37] rounded-2xl p-6 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4 transition-colors">
         <div>
           <h1 className="text-xl font-bold text-slate-800 dark:text-slate-100 font-sans">Good morning, Analyst</h1>
           <p className="text-slate-500 dark:text-slate-400 text-xs mt-1 font-mono">
@@ -64,12 +64,12 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
       </div>
 
       {/* Quick Start Panel */}
-      <div className="bg-slate-900/90 dark:bg-[#16191e] border border-slate-200 dark:border-[#2a2e37] rounded-2xl p-5 shadow-sm space-y-3 font-mono">
+      <div className="bg-white dark:bg-[#16191e] border border-slate-200 dark:border-[#2a2e37] rounded-2xl p-5 shadow-sm space-y-3 font-mono transition-colors">
         <div className="text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider">Quick Start Actions</div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           <button
             onClick={() => onRunNewInvestigation('TXN-QUICK-101')}
-            className="p-3 bg-slate-100 dark:bg-[#0f1115] hover:bg-slate-200 dark:hover:bg-[#1e2229] border border-slate-200 dark:border-[#2a2e37] rounded-xl text-left space-y-1 transition-all group"
+            className="p-3 bg-slate-50 dark:bg-[#0f1115] hover:bg-slate-100 dark:hover:bg-[#1e2229] border border-slate-200 dark:border-[#2a2e37] rounded-xl text-left space-y-1 transition-all group"
           >
             <div className="flex items-center justify-between text-xs font-bold text-slate-800 dark:text-slate-200">
               <span>New Investigation</span>
@@ -80,7 +80,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
           <button
             onClick={() => onSelectCase('CASE-ATO-1001')}
-            className="p-3 bg-slate-100 dark:bg-[#0f1115] hover:bg-slate-200 dark:hover:bg-[#1e2229] border border-slate-200 dark:border-[#2a2e37] rounded-xl text-left space-y-1 transition-all group"
+            className="p-3 bg-slate-50 dark:bg-[#0f1115] hover:bg-slate-100 dark:hover:bg-[#1e2229] border border-slate-200 dark:border-[#2a2e37] rounded-xl text-left space-y-1 transition-all group"
           >
             <div className="flex items-center justify-between text-xs font-bold text-slate-800 dark:text-slate-200">
               <span>Open Pending Review</span>
@@ -91,7 +91,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
           <button
             onClick={() => navigate('/cases')}
-            className="p-3 bg-slate-100 dark:bg-[#0f1115] hover:bg-slate-200 dark:hover:bg-[#1e2229] border border-slate-200 dark:border-[#2a2e37] rounded-xl text-left space-y-1 transition-all group"
+            className="p-3 bg-slate-50 dark:bg-[#0f1115] hover:bg-slate-100 dark:hover:bg-[#1e2229] border border-slate-200 dark:border-[#2a2e37] rounded-xl text-left space-y-1 transition-all group"
           >
             <div className="flex items-center justify-between text-xs font-bold text-slate-800 dark:text-slate-200">
               <span>Browse Cases</span>
@@ -102,7 +102,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
           <button
             onClick={() => navigate('/audit')}
-            className="p-3 bg-slate-100 dark:bg-[#0f1115] hover:bg-slate-200 dark:hover:bg-[#1e2229] border border-slate-200 dark:border-[#2a2e37] rounded-xl text-left space-y-1 transition-all group"
+            className="p-3 bg-slate-50 dark:bg-[#0f1115] hover:bg-slate-100 dark:hover:bg-[#1e2229] border border-slate-200 dark:border-[#2a2e37] rounded-xl text-left space-y-1 transition-all group"
           >
             <div className="flex items-center justify-between text-xs font-bold text-slate-800 dark:text-slate-200">
               <span>View Audit Trail</span>
@@ -115,7 +115,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
       {/* Compact Metrics Row */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 font-mono">
-        <div className="bg-slate-900/90 dark:bg-[#16191e] border border-slate-200 dark:border-[#2a2e37] rounded-2xl p-4 shadow-sm space-y-2">
+        <div className="bg-white dark:bg-[#16191e] border border-slate-200 dark:border-[#2a2e37] rounded-2xl p-4 shadow-sm space-y-2 transition-colors">
           <div className="text-[11px] font-semibold text-slate-500 uppercase">HIGH RISK CASES</div>
           <div className="flex items-baseline space-x-2">
             <span className="text-2xl font-extrabold text-rose-600 dark:text-rose-400">{stats.flagged_high_risk}</span>
@@ -124,7 +124,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           <div className="text-[10px] text-teal-600 dark:text-teal-400 font-bold">→ 3 require human review</div>
         </div>
 
-        <div className="bg-slate-900/90 dark:bg-[#16191e] border border-slate-200 dark:border-[#2a2e37] rounded-2xl p-4 shadow-sm space-y-2">
+        <div className="bg-white dark:bg-[#16191e] border border-slate-200 dark:border-[#2a2e37] rounded-2xl p-4 shadow-sm space-y-2 transition-colors">
           <div className="text-[11px] font-semibold text-slate-500 uppercase">AWAITING REVIEW</div>
           <div className="flex items-baseline space-x-2">
             <span className="text-2xl font-extrabold text-amber-600 dark:text-amber-400">{stats.pending_human_decisions}</span>
@@ -133,7 +133,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           <div className="text-[10px] text-slate-500">Highest risk: CASE-ATO-1001</div>
         </div>
 
-        <div className="bg-slate-900/90 dark:bg-[#16191e] border border-slate-200 dark:border-[#2a2e37] rounded-2xl p-4 shadow-sm space-y-2">
+        <div className="bg-white dark:bg-[#16191e] border border-slate-200 dark:border-[#2a2e37] rounded-2xl p-4 shadow-sm space-y-2 transition-colors">
           <div className="text-[11px] font-semibold text-slate-500 uppercase">INVESTIGATIONS RUNNING</div>
           <div className="flex items-baseline space-x-2">
             <span className="text-2xl font-extrabold text-teal-600 dark:text-teal-400">02</span>
@@ -144,7 +144,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
       </div>
 
       {/* Priority Queue Cards */}
-      <div className="bg-slate-900/90 dark:bg-[#16191e] border border-slate-200 dark:border-[#2a2e37] rounded-2xl p-6 shadow-sm space-y-4 font-mono">
+      <div className="bg-white dark:bg-[#16191e] border border-slate-200 dark:border-[#2a2e37] rounded-2xl p-6 shadow-sm space-y-4 font-mono transition-colors">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <ShieldAlert className="w-4 h-4 text-rose-500" />
@@ -158,12 +158,12 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             <div
               key={c.case_id}
               onClick={() => onSelectCase(c.case_id)}
-              className="bg-slate-100 dark:bg-[#0f1115] hover:bg-slate-200 dark:hover:bg-[#1e2229] border border-slate-200 dark:border-[#2a2e37] rounded-xl p-4 space-y-3 transition-all cursor-pointer flex flex-col justify-between"
+              className="bg-slate-50 dark:bg-[#0f1115] hover:bg-slate-100 dark:hover:bg-[#1e2229] border border-slate-200 dark:border-[#2a2e37] rounded-xl p-4 space-y-3 transition-all cursor-pointer flex flex-col justify-between"
             >
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold text-slate-800 dark:text-slate-200">{c.case_id}</span>
-                  <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-950/40 text-rose-600 dark:text-rose-400 border border-rose-800/40">
+                  <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-100 dark:bg-rose-950/40 text-rose-700 dark:text-rose-400 border border-rose-300 dark:border-rose-800/40">
                     {(c.risk_score * 100).toFixed(0)}% RISK
                   </span>
                 </div>

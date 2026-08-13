@@ -49,7 +49,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   ];
 
   const sidebarContent = (
-    <aside className={`bg-slate-900/95 dark:bg-[#16191e]/95 border-r border-slate-200 dark:border-[#2a2e37] flex flex-col justify-between shrink-0 h-screen sticky top-0 font-sans z-30 transition-all duration-200 ${
+    <aside className={`bg-white dark:bg-[#16191e] border-r border-slate-200 dark:border-[#2a2e37] flex flex-col justify-between shrink-0 h-screen sticky top-0 font-sans z-30 transition-all duration-200 ${
       collapsed ? 'lg:w-16' : 'lg:w-64'
     } w-64`}>
       <div>
@@ -77,7 +77,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             {/* Desktop Collapse Toggle */}
             <button
               onClick={() => setCollapsed(!collapsed)}
-              className="hidden lg:block text-slate-400 hover:text-slate-200 p-1 rounded hover:bg-slate-800"
+              className="hidden lg:block text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1 rounded hover:bg-slate-100 dark:hover:bg-slate-800"
             >
               {collapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
             </button>
@@ -86,7 +86,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             {onCloseMobile && (
               <button
                 onClick={onCloseMobile}
-                className="lg:hidden text-slate-400 hover:text-slate-200 p-1 rounded hover:bg-slate-800"
+                className="lg:hidden text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1 rounded hover:bg-slate-100 dark:hover:bg-slate-800"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -136,7 +136,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     title={collapsed ? item.label : undefined}
                     className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-all ${
                       isActive
-                        ? 'bg-teal-950/60 dark:bg-teal-950/50 text-teal-700 dark:text-teal-400 border border-teal-800/40 font-bold'
+                        ? 'bg-teal-50 dark:bg-teal-950/50 text-teal-700 dark:text-teal-400 border border-teal-200 dark:border-teal-800/40 font-bold'
                         : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-[#1e2229]'
                     }`}
                   >
@@ -167,7 +167,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             </span>
             <span className="text-emerald-600 dark:text-emerald-400 text-[10px] font-bold">Connected</span>
           </div>
-          <div className="bg-slate-200/60 dark:bg-[#16191e] p-2 rounded-xl border border-slate-300/60 dark:border-[#2a2e37] flex items-center justify-between">
+          <div className="bg-slate-100 dark:bg-[#16191e] p-2 rounded-xl border border-slate-200 dark:border-[#2a2e37] flex items-center justify-between">
             <div>
               <div className="text-[11px] font-bold text-slate-800 dark:text-slate-200">Sarah Jenkins</div>
               <div className="text-[9px] text-slate-500">Lead Fraud Analyst</div>

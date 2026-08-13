@@ -1,7 +1,21 @@
-import { SystemHealth, CaseRecord, ReportComparisonResult } from '../types';
-
+import { SystemHealth, CaseRecord, ReportComparisonResult, UserProfile } from '../types';
 
 const API_BASE_URL = (import.meta as any).env?.VITE_API_BASE_URL || 'http://localhost:8000';
+
+export async function loginUser(emailOrUserId: string, password: string): Promise<{ access_token: string; user: UserProfile }> {
+  const response = await fetch(`${API_BASE_URL}/api/v1/auth/login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email: emailOrUserId, password })
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({ detail: 'Invalid credentials' }));
+    throw new Error(errorData.detail || 'Authentication failed');
+  }
+
+  return response.json();
+}
 
 export async function fetchHealth(): Promise<SystemHealth> {
   const response = await fetch(`${API_BASE_URL}/health`);
@@ -66,7 +80,7 @@ export async function reinvestigateCase(
   return response.json();
 }
 
-export async function addAnalystNote(caseId: string, noteText: string, authorId: string = 'ANALYST-001'): Promise<CaseRecord> {
+export async function addAnalystNote(caseId: string, noteText: string, authorId: string = 'ANALYST-001'): Promise<any> {
   const response = await fetch(`${API_BASE_URL}/api/v1/investigations/cases/${caseId}/notes`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -83,7 +97,7 @@ export async function submitAnalystDecision(
   decision: 'CONFIRM_FRAUD' | 'REJECT_FRAUD' | 'REQUEST_MORE_INFO' | 'ESCALATE',
   notes?: string,
   analystId: string = 'ANALYST-001'
-): Promise<CaseRecord> {
+): Promise<any> {
   const response = await fetch(`${API_BASE_URL}/api/v1/investigations/cases/${caseId}/decision`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -124,7 +138,6 @@ export async function ingestManualCase(payload: {
   }
   return response.json();
 }
-
 
 export async function ingestFileCase(file: File): Promise<CaseRecord> {
   const formData = new FormData();

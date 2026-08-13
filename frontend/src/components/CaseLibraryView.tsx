@@ -3,7 +3,6 @@ import { CaseRecord } from '../types';
 import { fetchCaseLibrary } from '../api/client';
 import { Search, ChevronRight, PlusCircle } from 'lucide-react';
 
-
 interface CaseLibraryViewProps {
   onSelectCase: (caseId: string) => void;
   onOpenIngestModal: () => void;
@@ -37,7 +36,7 @@ export const CaseLibraryView: React.FC<CaseLibraryViewProps> = ({
   return (
     <div className="space-y-6 font-sans">
       {/* Header Banner */}
-      <div className="bg-slate-900/90 dark:bg-[#16191e] border border-slate-200 dark:border-[#2a2e37] rounded-2xl p-6 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4 transition-colors font-mono">
+      <div className="bg-white dark:bg-[#16191e] border border-slate-200 dark:border-[#2a2e37] rounded-2xl p-6 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4 transition-colors font-mono">
         <div>
           <div className="flex items-center space-x-3">
             <h1 className="text-xl font-bold text-slate-800 dark:text-slate-100">CASES</h1>
@@ -60,7 +59,7 @@ export const CaseLibraryView: React.FC<CaseLibraryViewProps> = ({
       </div>
 
       {/* Filter & Search Controls */}
-      <div className="bg-slate-900/90 dark:bg-[#16191e] border border-slate-200 dark:border-[#2a2e37] rounded-2xl p-4 shadow-sm flex flex-col md:flex-row gap-4 justify-between items-center font-mono">
+      <div className="bg-white dark:bg-[#16191e] border border-slate-200 dark:border-[#2a2e37] rounded-2xl p-4 shadow-sm flex flex-col md:flex-row gap-4 justify-between items-center font-mono transition-colors">
         <div className="relative w-full md:w-80">
           <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-3" />
           <input
@@ -72,7 +71,7 @@ export const CaseLibraryView: React.FC<CaseLibraryViewProps> = ({
           />
         </div>
 
-        <div className="flex items-center space-x-3 w-full md:w-auto font-xs">
+        <div className="flex items-center space-x-3 w-full md:w-auto text-xs">
           <span className="text-[11px] text-slate-500 uppercase font-bold">Risk:</span>
           <select
             value={selectedRisk}
@@ -106,14 +105,14 @@ export const CaseLibraryView: React.FC<CaseLibraryViewProps> = ({
           Loading case repository from database...
         </div>
       ) : cases.length === 0 ? (
-        <div className="bg-slate-900/90 dark:bg-[#16191e] border border-slate-200 dark:border-[#2a2e37] rounded-2xl p-12 text-center text-slate-400 font-mono text-xs">
+        <div className="bg-white dark:bg-[#16191e] border border-slate-200 dark:border-[#2a2e37] rounded-2xl p-12 text-center text-slate-400 font-mono text-xs">
           No cases match the specified filters.
         </div>
       ) : (
-        <div className="bg-slate-900/90 dark:bg-[#16191e] border border-slate-200 dark:border-[#2a2e37] rounded-2xl shadow-sm overflow-hidden font-mono">
+        <div className="bg-white dark:bg-[#16191e] border border-slate-200 dark:border-[#2a2e37] rounded-2xl shadow-sm overflow-hidden font-mono transition-colors">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs text-slate-700 dark:text-slate-300">
-              <thead className="bg-slate-100 dark:bg-[#0f1115] text-[10px] text-slate-500 uppercase tracking-wider border-b border-slate-200 dark:border-[#2a2e37]">
+              <thead className="bg-slate-50 dark:bg-[#0f1115] text-[10px] text-slate-500 uppercase tracking-wider border-b border-slate-200 dark:border-[#2a2e37]">
                 <tr>
                   <th className="py-3 px-4">Case ID</th>
                   <th className="py-3 px-4">Case Title</th>
@@ -134,7 +133,7 @@ export const CaseLibraryView: React.FC<CaseLibraryViewProps> = ({
                     <tr
                       key={c.case_id}
                       onClick={() => onSelectCase(c.case_id)}
-                      className="hover:bg-slate-100 dark:hover:bg-[#1e2229] transition-colors cursor-pointer"
+                      className="hover:bg-slate-50 dark:hover:bg-[#1e2229] transition-colors cursor-pointer"
                     >
                       <td className="py-3 px-4 font-bold text-teal-700 dark:text-teal-400 font-mono">{c.case_id}</td>
                       <td className="py-3 px-4 font-sans font-semibold text-slate-800 dark:text-slate-100 max-w-xs truncate">
@@ -142,10 +141,10 @@ export const CaseLibraryView: React.FC<CaseLibraryViewProps> = ({
                       </td>
                       <td className="py-3 px-4">
                         <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                          riskLevel === 'CRITICAL' ? 'bg-rose-950/40 text-rose-600 dark:text-rose-400 border border-rose-800/40' :
-                          riskLevel === 'HIGH' ? 'bg-orange-950/40 text-orange-600 dark:text-orange-400 border border-orange-800/40' :
-                          riskLevel === 'MEDIUM' ? 'bg-amber-950/40 text-amber-600 dark:text-amber-400 border border-amber-800/40' :
-                          'bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 border border-emerald-800/40'
+                          riskLevel === 'CRITICAL' ? 'bg-rose-100 dark:bg-rose-950/40 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-800/40' :
+                          riskLevel === 'HIGH' ? 'bg-orange-100 dark:bg-orange-950/40 text-orange-700 dark:text-orange-400 border border-orange-200 dark:border-orange-800/40' :
+                          riskLevel === 'MEDIUM' ? 'bg-amber-100 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800/40' :
+                          'bg-emerald-100 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/40'
                         }`}>
                           {riskLevel}
                         </span>

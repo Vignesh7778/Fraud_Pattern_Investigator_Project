@@ -11,6 +11,7 @@ import { GraphRelationshipsView } from './components/GraphRelationshipsView';
 import { ReportsHistoryView } from './components/ReportsHistoryView';
 import { AuditLogView } from './components/AuditLogView';
 import { IngestionModal } from './components/IngestionModal';
+import { LoginView } from './components/LoginView';
 import { fetchHealth, runInvestigation, getCaseDetails } from './api/client';
 import { UserProfile, CaseRecord } from './types';
 import { Theme, getStoredTheme, applyTheme } from './utils/theme';
@@ -76,11 +77,24 @@ const CaseWorkspaceWrapper: React.FC<{
 
 export const App: React.FC = () => {
   const navigate = useNavigate();
-  const [user] = useState<UserProfile>({
-    id: 'USR-001',
-    name: 'Sarah Jenkins',
-    email: 'sarah.jenkins@fraud-investigator.io',
-    role: 'analyst'
+
+  // Authentication State
+  const [user, setUser] = useState<UserProfile | null>(() => {
+    const saved = localStorage.getItem('fpi_user');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        return null;
+      }
+    }
+    // Default initial analyst session
+    return {
+      id: 'USR-001',
+      name: 'Sarah Jenkins',
+      email: 'analyst@fpi.io',
+      role: 'analyst'
+    };
   });
 
   const [theme, setTheme] = useState<Theme>(() => getStoredTheme());
@@ -99,13 +113,26 @@ export const App: React.FC = () => {
     fetchHealth().catch(err => console.warn('Health check failed', err));
   }, []);
 
+  const handleLoginSuccess = (userProfile: UserProfile, token: string) => {
+    setUser(userProfile);
+    localStorage.setItem('fpi_user', JSON.stringify(userProfile));
+    localStorage.setItem('fpi_user_token', token);
+    navigate('/');
+  };
+
+  const handleLogout = () => {
+    setUser(null);
+    localStorage.removeItem('fpi_user');
+    localStorage.removeItem('fpi_user_token');
+  };
+
   const handleToggleTheme = () => {
     setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
   };
 
   const handleRunInvestigation = async (txnId: string) => {
     try {
-      const caseRecord = await runInvestigation(txnId, user.role);
+      const caseRecord = await runInvestigation(txnId, user?.role || 'analyst');
       setSelectedCaseId(caseRecord.case_id);
       setCurrentCaseRecord(caseRecord);
       navigate(`/cases/${caseRecord.case_id}`);
@@ -126,6 +153,11 @@ export const App: React.FC = () => {
     navigate(`/cases/${newCase.case_id}`);
   };
 
+  // If user is not authenticated, render Login Page
+  if (!user) {
+    return <LoginView onLoginSuccess={handleLoginSuccess} />;
+  }
+
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-[#0f1115] text-slate-900 dark:text-[#f0f2f5] font-sans selection:bg-teal-600 selection:text-white flex transition-colors duration-150">
       {/* Route-Aware Sidebar with Mobile Support */}
@@ -145,6 +177,7 @@ export const App: React.FC = () => {
           onToggleTheme={handleToggleTheme}
           onOpenCommandPalette={() => setIsCommandPaletteOpen(true)}
           onOpenMobileSidebar={() => setIsMobileSidebarOpen(true)}
+          onLogout={handleLogout}
         />
 
         {/* Content Body Routes */}
