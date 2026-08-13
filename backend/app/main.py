@@ -35,12 +35,15 @@ from app.api import health
 from app.api import investigations
 from app.api import auth
 from app.api import audit
+from app.api import graph
 
 app.include_router(health.router)
 app.include_router(investigations.router)
 app.include_router(auth.router)
 app.include_router(audit.router)
+app.include_router(graph.router)
 app.include_router(health.router, prefix="/api/v1", tags=["Health V1"])
+
 
 
 

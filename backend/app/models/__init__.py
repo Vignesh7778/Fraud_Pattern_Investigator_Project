@@ -1,13 +1,8 @@
 from app.models.base import Base, TimestampMixin, generate_uuid
-from app.models.entities import (
-    User, Account, Device, IPAddress, Merchant,
-    DeviceAccountLink, IPAccountLink, Transaction
-)
-from app.models.investigation import (
-    Investigation, InvestigationEvidence, ToolExecution, AnalystDecision
-)
+from app.models.entities import User, Account, Device, IPAddress, Merchant, DeviceAccountLink, IPAccountLink, Transaction
+from app.models.investigation import Case, InvestigationRun, ReportVersion, InvestigationEvidence, ToolExecution, AnalystDecision, CaseUpdate, AnalystNote
 from app.models.knowledge import PolicyDocument, HistoricalCase
-from app.models.system import ModelVersion, AuditEvent
+from app.models.system import AuditEvent, ModelVersion
 
 __all__ = [
     "Base",
@@ -21,12 +16,17 @@ __all__ = [
     "DeviceAccountLink",
     "IPAccountLink",
     "Transaction",
-    "Investigation",
+    "Case",
+    "InvestigationRun",
+    "ReportVersion",
     "InvestigationEvidence",
     "ToolExecution",
     "AnalystDecision",
+    "CaseUpdate",
+    "AnalystNote",
     "PolicyDocument",
     "HistoricalCase",
-    "ModelVersion",
     "AuditEvent",
+    "ModelVersion",
 ]
+

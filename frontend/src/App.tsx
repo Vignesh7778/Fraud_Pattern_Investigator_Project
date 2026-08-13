@@ -1,13 +1,81 @@
 import React, { useState, useEffect } from 'react';
-import { Navbar } from './components/Navbar';
+import { Routes, Route, useNavigate, useParams, Navigate } from 'react-router-dom';
+import { Sidebar } from './components/Sidebar';
+import { TopBar } from './components/ui/TopBar';
+import { CommandPalette } from './components/ui/CommandPalette';
 import { DashboardView } from './components/DashboardView';
+import { CaseLibraryView } from './components/CaseLibraryView';
 import { DetailView } from './components/DetailView';
-import { SearchView } from './components/SearchView';
+import { EvidenceExplorerView } from './components/EvidenceExplorerView';
+import { GraphRelationshipsView } from './components/GraphRelationshipsView';
+import { ReportsHistoryView } from './components/ReportsHistoryView';
+import { AuditLogView } from './components/AuditLogView';
 import { IngestionModal } from './components/IngestionModal';
-import { fetchHealth, runInvestigation, getCaseDetails, getDashboardStats } from './api/client';
-import { SystemHealth, UserProfile, InvestigationState } from './types';
+import { fetchHealth, runInvestigation, getCaseDetails } from './api/client';
+import { UserProfile, CaseRecord } from './types';
+import { Theme, getStoredTheme, applyTheme } from './utils/theme';
+
+// Case Workspace Wrapper Route Component
+const CaseWorkspaceWrapper: React.FC<{
+  onRefresh: () => void;
+  onSetCurrentCase: (caseRecord: CaseRecord) => void;
+}> = ({ onRefresh, onSetCurrentCase }) => {
+  const { caseId } = useParams<{ caseId: string }>();
+  const [caseRecord, setCaseRecord] = useState<CaseRecord | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function loadWorkspace() {
+      if (!caseId) return;
+      setLoading(true);
+      setError(null);
+      try {
+        const res = await getCaseDetails(caseId);
+        setCaseRecord(res);
+        onSetCurrentCase(res);
+      } catch (err: any) {
+        setError(err.message || 'Failed to load case');
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadWorkspace();
+  }, [caseId]);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-20 space-x-3 text-teal-600 dark:text-teal-400 font-mono">
+        <div className="w-6 h-6 border-2 border-teal-600 dark:border-teal-400 border-t-transparent rounded-full animate-spin"></div>
+        <span className="text-sm">Loading Case Workspace ({caseId})...</span>
+      </div>
+    );
+  }
+
+  if (error || !caseRecord) {
+    return (
+      <div className="p-12 text-center text-slate-500 font-mono text-xs bg-slate-100 dark:bg-[#16191e] border border-slate-200 dark:border-[#2a2e37] rounded-2xl">
+        Case workspace for '{caseId}' could not be loaded. Please return to Case Library.
+      </div>
+    );
+  }
+
+  return (
+    <DetailView
+      caseData={caseRecord}
+      onRefresh={() => {
+        getCaseDetails(caseRecord.case_id).then((updated) => {
+          setCaseRecord(updated);
+          onSetCurrentCase(updated);
+        });
+        onRefresh();
+      }}
+    />
+  );
+};
 
 export const App: React.FC = () => {
+  const navigate = useNavigate();
   const [user] = useState<UserProfile>({
     id: 'USR-001',
     name: 'Sarah Jenkins',
@@ -15,127 +83,149 @@ export const App: React.FC = () => {
     role: 'analyst'
   });
 
-  const [activeTab, setActiveTab] = useState<string>('dashboard');
-  const [health, setHealth] = useState<SystemHealth | null>(null);
+  const [theme, setTheme] = useState<Theme>(() => getStoredTheme());
   const [isIngestionOpen, setIsIngestionOpen] = useState(false);
-  const [stats, setStats] = useState({
-    total_investigations: 4,
-    flagged_high_risk: 3,
-    pending_human_decisions: 2,
-    avg_confidence: 0.92,
-    active_analysts: 3
-  });
+  const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
-  const [selectedCase, setSelectedCase] = useState<InvestigationState | null>(null);
-  const [loading, setLoading] = useState(false);
-
+  const [selectedCaseId, setSelectedCaseId] = useState<string>('CASE-ATO-1001');
+  const [_, setCurrentCaseRecord] = useState<CaseRecord | null>(null);
 
   useEffect(() => {
-    fetchHealth()
-      .then(setHealth)
-      .catch(err => console.warn('Health check failed', err));
+    applyTheme(theme);
+  }, [theme]);
 
-    getDashboardStats()
-      .then(setStats)
-      .catch(err => console.warn('Dashboard stats failed', err));
+  useEffect(() => {
+    fetchHealth().catch(err => console.warn('Health check failed', err));
   }, []);
 
+  const handleToggleTheme = () => {
+    setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
+  };
+
   const handleRunInvestigation = async (txnId: string) => {
-    setLoading(true);
     try {
-      const state = await runInvestigation(txnId, user.role);
-      setSelectedCase(state);
-      setActiveTab('detail');
+      const caseRecord = await runInvestigation(txnId, user.role);
+      setSelectedCaseId(caseRecord.case_id);
+      setCurrentCaseRecord(caseRecord);
+      navigate(`/cases/${caseRecord.case_id}`);
     } catch (err) {
       alert(`Investigation failed: ${err}`);
-    } finally {
-      setLoading(false);
     }
   };
 
-  const handleSelectCase = async (caseId: string) => {
-    setLoading(true);
-    try {
-      const state = await getCaseDetails(caseId);
-      setSelectedCase(state);
-      setActiveTab('detail');
-    } catch (err) {
-      alert(`Could not fetch case ${caseId}: ${err}`);
-    } finally {
-      setLoading(false);
-    }
+  const handleSelectCase = (caseId: string) => {
+    setSelectedCaseId(caseId);
+    navigate(`/cases/${caseId}`);
   };
 
-  const handleRefreshCase = async () => {
-    if (selectedCase) {
-      handleSelectCase(selectedCase.case_id);
-    }
+  const handleIngestSuccess = (newCase: CaseRecord) => {
+    setSelectedCaseId(newCase.case_id);
+    setCurrentCaseRecord(newCase);
+    setIsIngestionOpen(false);
+    navigate(`/cases/${newCase.case_id}`);
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 font-sans selection:bg-indigo-500 selection:text-white flex flex-col">
-      <Navbar
-        user={user}
-        activeTab={activeTab}
-        setActiveTab={setActiveTab}
-        health={health}
-        onOpenIngestion={() => setIsIngestionOpen(true)}
+    <div className="min-h-screen bg-slate-50 dark:bg-[#0f1115] text-slate-900 dark:text-[#f0f2f5] font-sans selection:bg-teal-600 selection:text-white flex transition-colors duration-150">
+      {/* Route-Aware Sidebar with Mobile Support */}
+      <Sidebar
+        onOpenIngestModal={() => setIsIngestionOpen(true)}
+        selectedCaseId={selectedCaseId}
+        isMobileOpen={isMobileSidebarOpen}
+        onCloseMobile={() => setIsMobileSidebarOpen(false)}
       />
 
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {loading && (
-          <div className="flex items-center justify-center py-16 space-x-3 text-indigo-400">
-            <div className="w-6 h-6 border-2 border-indigo-400 border-t-transparent rounded-full animate-spin"></div>
-            <span className="font-mono text-sm">Executing Autonomous AI Investigation Harness...</span>
-          </div>
-        )}
+      {/* Main Workspace Area */}
+      <div className="flex-1 flex flex-col min-w-0">
+        {/* Top Navigation Bar */}
+        <TopBar
+          user={user}
+          theme={theme}
+          onToggleTheme={handleToggleTheme}
+          onOpenCommandPalette={() => setIsCommandPaletteOpen(true)}
+          onOpenMobileSidebar={() => setIsMobileSidebarOpen(true)}
+        />
 
-        {!loading && activeTab === 'dashboard' && (
-          <DashboardView
-            stats={stats}
-            onRunNewInvestigation={handleRunInvestigation}
-            onSelectCase={handleSelectCase}
-          />
-        )}
+        {/* Content Body Routes */}
+        <main className="flex-1 p-4 md:p-8 overflow-y-auto">
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <DashboardView
+                  stats={{
+                    total_investigations: 12,
+                    flagged_high_risk: 8,
+                    pending_human_decisions: 3,
+                    avg_confidence: 0.94,
+                    active_analysts: 4
+                  }}
+                  onRunNewInvestigation={handleRunInvestigation}
+                  onSelectCase={handleSelectCase}
+                />
+              }
+            />
 
-        {!loading && activeTab === 'search' && (
-          <SearchView onSelectCase={handleSelectCase} />
-        )}
+            <Route
+              path="/cases"
+              element={
+                <CaseLibraryView
+                  onSelectCase={handleSelectCase}
+                  onOpenIngestModal={() => setIsIngestionOpen(true)}
+                />
+              }
+            />
 
-        {!loading && activeTab === 'detail' && selectedCase && (
-          <DetailView caseData={selectedCase} onRefresh={handleRefreshCase} />
-        )}
+            <Route
+              path="/cases/:caseId"
+              element={
+                <CaseWorkspaceWrapper
+                  onRefresh={() => {}}
+                  onSetCurrentCase={setCurrentCaseRecord}
+                />
+              }
+            />
 
-        {!loading && activeTab === 'detail' && !selectedCase && (
-          <div className="text-center py-16 bg-slate-900/40 rounded-2xl border border-slate-800">
-            <h3 className="text-lg font-semibold text-slate-300">No Case Selected</h3>
-            <p className="text-sm text-slate-400 mt-1 mb-4">Please select a case from the dashboard, search, or upload a new case.</p>
-            <div className="flex justify-center gap-3">
-              <button
-                onClick={() => setActiveTab('dashboard')}
-                className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-medium text-xs rounded-lg transition-colors"
-              >
-                Go to Dashboard
-              </button>
-              <button
-                onClick={() => setIsIngestionOpen(true)}
-                className="px-4 py-2 bg-cyan-600 hover:bg-cyan-500 text-white font-medium text-xs rounded-lg transition-colors"
-              >
-                Ingest New Case
-              </button>
-            </div>
-          </div>
-        )}
-      </main>
+            <Route
+              path="/evidence"
+              element={<EvidenceExplorerView onSelectCase={handleSelectCase} />}
+            />
 
-      <IngestionModal
-        isOpen={isIngestionOpen}
-        onClose={() => setIsIngestionOpen(false)}
-        onCaseIngested={(state) => {
-          setSelectedCase(state);
-          setActiveTab('detail');
-        }}
+            <Route
+              path="/graph"
+              element={<GraphRelationshipsView />}
+            />
+
+            <Route
+              path="/reports"
+              element={<ReportsHistoryView onSelectCase={handleSelectCase} />}
+            />
+
+            <Route
+              path="/audit"
+              element={<AuditLogView />}
+            />
+
+            <Route path="*" element={<Navigate to="/cases" replace />} />
+          </Routes>
+        </main>
+      </div>
+
+      {/* Command Palette Modal (⌘K) */}
+      <CommandPalette
+        isOpen={isCommandPaletteOpen}
+        onClose={() => setIsCommandPaletteOpen(false)}
+        onOpenIngestModal={() => setIsIngestionOpen(true)}
       />
+
+      {/* Dual Entry Case Ingestion Modal */}
+      {isIngestionOpen && (
+        <IngestionModal
+          onClose={() => setIsIngestionOpen(false)}
+          onSuccess={handleIngestSuccess}
+        />
+      )}
     </div>
   );
 };

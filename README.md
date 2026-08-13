@@ -116,3 +116,11 @@ docker-compose exec backend pytest backend
 - [`docs/final_audit.md`](file:///c:/Users/vigne/Desktop/Projects/Fraud_Pattern_Investigator_Project/docs/final_audit.md): Security & Quality Audit Report
 - [`docs/open_source_inventory.md`](file:///c:/Users/vigne/Desktop/Projects/Fraud_Pattern_Investigator_Project/docs/open_source_inventory.md): License & Dependency Manifest
 - [`docs/project_execution_status.md`](file:///c:/Users/vigne/Desktop/Projects/Fraud_Pattern_Investigator_Project/docs/project_execution_status.md): Phase Execution Log
+
+
+cd backend
+python -m uvicorn app.main:app --app-dir backend --reload --port 8000
+
+
+cd frontend
+npm run dev

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-
+import { ShieldAlert, Play, Search, ChevronRight, AlertCircle, Activity } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 interface DashboardViewProps {
   stats: {
@@ -18,6 +19,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   onRunNewInvestigation,
   onSelectCase
 }) => {
+  const navigate = useNavigate();
   const [txnInput, setTxnInput] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -27,117 +29,155 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
     }
   };
 
-  const sampleCases = [
-    { case_id: 'CASE-8910', transaction_id: 'TXN-9001', risk_level: 'CRITICAL', risk_score: 0.94, status: 'HUMAN_REVIEW', pattern: 'shared_device' },
-    { case_id: 'CASE-8911', transaction_id: 'TXN-9002', risk_level: 'HIGH', risk_score: 0.78, status: 'HUMAN_REVIEW', pattern: 'velocity' },
-    { case_id: 'CASE-8912', transaction_id: 'TXN-9003', risk_level: 'MEDIUM', risk_score: 0.52, status: 'FINAL_DECISION', pattern: 'legitimate_shared_device' },
-    { case_id: 'CASE-8913', transaction_id: 'TXN-9004', risk_level: 'LOW', risk_score: 0.12, status: 'FINAL_DECISION', pattern: 'normal_behavior' }
+  const priorityCases = [
+    { case_id: 'CASE-ATO-1001', transaction_id: 'TXN-ATO-1001', title: 'Account Takeover & Device Sharing', risk_level: 'CRITICAL', risk_score: 0.94, evidence_count: 12, status: 'HUMAN_REVIEW' },
+    { case_id: 'CASE-VEL-2002', transaction_id: 'TXN-VEL-2002', title: 'Bot Velocity Micro-Transactions', risk_level: 'HIGH', risk_score: 0.88, evidence_count: 8, status: 'HUMAN_REVIEW' },
+    { case_id: 'CASE-GEO-3003', transaction_id: 'TXN-GEO-3003', title: 'Geographic Impossible Travel Anomaly', risk_level: 'CRITICAL', risk_score: 0.91, evidence_count: 14, status: 'HUMAN_REVIEW' }
   ];
 
   return (
-    <div className="space-y-6">
-      {/* Top Banner */}
-      <div className="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 border border-indigo-900/40 rounded-2xl p-6 shadow-xl relative overflow-hidden">
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div>
-            <h1 className="text-2xl font-bold text-slate-100">Autonomous Fraud Investigation Hub</h1>
-            <p className="text-slate-400 text-sm mt-1">
-              AI evaluates ML risk, patterns, graph links & RAG policies. <span className="text-indigo-300 font-medium">Human analyst retains final authority.</span>
-            </p>
-          </div>
+    <div className="space-y-6 font-sans">
+      {/* Header Banner */}
+      <div className="bg-slate-900/90 dark:bg-[#16191e] border border-slate-200 dark:border-[#2a2e37] rounded-2xl p-6 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4 transition-colors">
+        <div>
+          <h1 className="text-xl font-bold text-slate-800 dark:text-slate-100 font-sans">Good morning, Analyst</h1>
+          <p className="text-slate-500 dark:text-slate-400 text-xs mt-1 font-mono">
+            Review active investigations and resolve high-priority cases. Standardized CASE-ID format for seamless navigation.
+          </p>
+        </div>
 
-          <form onSubmit={handleSubmit} className="flex items-center space-x-2">
-            <input
-              type="text"
-              placeholder="Enter Transaction ID (e.g. TXN-1001)"
-              value={txnInput}
-              onChange={e => setTxnInput(e.target.value)}
-              className="bg-slate-900/90 border border-slate-700 text-slate-100 px-4 py-2.5 rounded-xl text-sm focus:outline-none focus:border-indigo-500 w-64 shadow-inner"
-            />
-            <button
-              type="submit"
-              className="bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-semibold px-5 py-2.5 rounded-xl text-sm shadow-lg shadow-indigo-600/30 transition-all"
+        <form onSubmit={handleSubmit} className="flex items-center space-x-2">
+          <input
+            type="text"
+            placeholder="Enter Txn ID (e.g. TXN-1001)"
+            value={txnInput}
+            onChange={e => setTxnInput(e.target.value)}
+            className="bg-slate-100 dark:bg-[#0f1115] border border-slate-200 dark:border-[#2a2e37] text-slate-800 dark:text-slate-100 px-3.5 py-2 rounded-xl text-xs focus:outline-none focus:border-teal-600 font-mono w-56"
+          />
+          <button
+            type="submit"
+            className="bg-teal-700 hover:bg-teal-600 dark:bg-teal-600/90 dark:hover:bg-teal-600 text-white font-semibold px-4 py-2 rounded-xl text-xs shadow-sm transition-all font-mono"
+          >
+            Investigate
+          </button>
+        </form>
+      </div>
+
+      {/* Quick Start Panel */}
+      <div className="bg-slate-900/90 dark:bg-[#16191e] border border-slate-200 dark:border-[#2a2e37] rounded-2xl p-5 shadow-sm space-y-3 font-mono">
+        <div className="text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider">Quick Start Actions</div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <button
+            onClick={() => onRunNewInvestigation('TXN-QUICK-101')}
+            className="p-3 bg-slate-100 dark:bg-[#0f1115] hover:bg-slate-200 dark:hover:bg-[#1e2229] border border-slate-200 dark:border-[#2a2e37] rounded-xl text-left space-y-1 transition-all group"
+          >
+            <div className="flex items-center justify-between text-xs font-bold text-slate-800 dark:text-slate-200">
+              <span>New Investigation</span>
+              <Play className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400 group-hover:translate-x-0.5 transition-transform" />
+            </div>
+            <div className="text-[10px] text-slate-500">Run automated AI harness</div>
+          </button>
+
+          <button
+            onClick={() => onSelectCase('CASE-ATO-1001')}
+            className="p-3 bg-slate-100 dark:bg-[#0f1115] hover:bg-slate-200 dark:hover:bg-[#1e2229] border border-slate-200 dark:border-[#2a2e37] rounded-xl text-left space-y-1 transition-all group"
+          >
+            <div className="flex items-center justify-between text-xs font-bold text-slate-800 dark:text-slate-200">
+              <span>Open Pending Review</span>
+              <AlertCircle className="w-3.5 h-3.5 text-amber-500 group-hover:translate-x-0.5 transition-transform" />
+            </div>
+            <div className="text-[10px] text-slate-500">Review critical CASE-ATO-1001</div>
+          </button>
+
+          <button
+            onClick={() => navigate('/cases')}
+            className="p-3 bg-slate-100 dark:bg-[#0f1115] hover:bg-slate-200 dark:hover:bg-[#1e2229] border border-slate-200 dark:border-[#2a2e37] rounded-xl text-left space-y-1 transition-all group"
+          >
+            <div className="flex items-center justify-between text-xs font-bold text-slate-800 dark:text-slate-200">
+              <span>Browse Cases</span>
+              <Search className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400 group-hover:translate-x-0.5 transition-transform" />
+            </div>
+            <div className="text-[10px] text-slate-500">View saved case repository</div>
+          </button>
+
+          <button
+            onClick={() => navigate('/audit')}
+            className="p-3 bg-slate-100 dark:bg-[#0f1115] hover:bg-slate-200 dark:hover:bg-[#1e2229] border border-slate-200 dark:border-[#2a2e37] rounded-xl text-left space-y-1 transition-all group"
+          >
+            <div className="flex items-center justify-between text-xs font-bold text-slate-800 dark:text-slate-200">
+              <span>View Audit Trail</span>
+              <Activity className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400 group-hover:translate-x-0.5 transition-transform" />
+            </div>
+            <div className="text-[10px] text-slate-500">Compliance & activity logs</div>
+          </button>
+        </div>
+      </div>
+
+      {/* Compact Metrics Row */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 font-mono">
+        <div className="bg-slate-900/90 dark:bg-[#16191e] border border-slate-200 dark:border-[#2a2e37] rounded-2xl p-4 shadow-sm space-y-2">
+          <div className="text-[11px] font-semibold text-slate-500 uppercase">HIGH RISK CASES</div>
+          <div className="flex items-baseline space-x-2">
+            <span className="text-2xl font-extrabold text-rose-600 dark:text-rose-400">{stats.flagged_high_risk}</span>
+            <span className="text-xs text-slate-500">Risk Score ≥ 0.70</span>
+          </div>
+          <div className="text-[10px] text-teal-600 dark:text-teal-400 font-bold">→ 3 require human review</div>
+        </div>
+
+        <div className="bg-slate-900/90 dark:bg-[#16191e] border border-slate-200 dark:border-[#2a2e37] rounded-2xl p-4 shadow-sm space-y-2">
+          <div className="text-[11px] font-semibold text-slate-500 uppercase">AWAITING REVIEW</div>
+          <div className="flex items-baseline space-x-2">
+            <span className="text-2xl font-extrabold text-amber-600 dark:text-amber-400">{stats.pending_human_decisions}</span>
+            <span className="text-xs text-slate-500">Pending analyst decision</span>
+          </div>
+          <div className="text-[10px] text-slate-500">Highest risk: CASE-ATO-1001</div>
+        </div>
+
+        <div className="bg-slate-900/90 dark:bg-[#16191e] border border-slate-200 dark:border-[#2a2e37] rounded-2xl p-4 shadow-sm space-y-2">
+          <div className="text-[11px] font-semibold text-slate-500 uppercase">INVESTIGATIONS RUNNING</div>
+          <div className="flex items-baseline space-x-2">
+            <span className="text-2xl font-extrabold text-teal-600 dark:text-teal-400">02</span>
+            <span className="text-xs text-slate-500">Active harness workers</span>
+          </div>
+          <div className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold">● Operational</div>
+        </div>
+      </div>
+
+      {/* Priority Queue Cards */}
+      <div className="bg-slate-900/90 dark:bg-[#16191e] border border-slate-200 dark:border-[#2a2e37] rounded-2xl p-6 shadow-sm space-y-4 font-mono">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-2">
+            <ShieldAlert className="w-4 h-4 text-rose-500" />
+            <h2 className="text-sm font-bold text-slate-800 dark:text-slate-100">PRIORITY REVIEW QUEUE</h2>
+          </div>
+          <span className="text-xs text-slate-500">Sorted by Risk Score</span>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {priorityCases.map((c) => (
+            <div
+              key={c.case_id}
+              onClick={() => onSelectCase(c.case_id)}
+              className="bg-slate-100 dark:bg-[#0f1115] hover:bg-slate-200 dark:hover:bg-[#1e2229] border border-slate-200 dark:border-[#2a2e37] rounded-xl p-4 space-y-3 transition-all cursor-pointer flex flex-col justify-between"
             >
-              Investigate
-            </button>
-          </form>
-        </div>
-      </div>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-slate-800 dark:text-slate-200">{c.case_id}</span>
+                  <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-950/40 text-rose-600 dark:text-rose-400 border border-rose-800/40">
+                    {(c.risk_score * 100).toFixed(0)}% RISK
+                  </span>
+                </div>
+                <div className="text-xs font-bold text-slate-700 dark:text-slate-300 font-sans line-clamp-2">{c.title}</div>
+              </div>
 
-      {/* Metrics Row */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        {[
-          { label: 'Total Investigations', val: stats.total_investigations, sub: 'All cases evaluated', color: 'border-slate-800 text-slate-100' },
-          { label: 'High/Critical Risk', val: stats.flagged_high_risk, sub: 'Risk score ≥ 0.70', color: 'border-rose-900/40 text-rose-400' },
-          { label: 'Pending Human Review', val: stats.pending_human_decisions, sub: 'Requires analyst action', color: 'border-amber-900/40 text-amber-400' },
-          { label: 'Avg AI Confidence', val: `${(stats.avg_confidence * 100).toFixed(0)}%`, sub: 'Grounded evidence score', color: 'border-emerald-900/40 text-emerald-400' }
-        ].map((m, i) => (
-          <div key={i} className={`bg-slate-900/80 border ${m.color} rounded-2xl p-5 shadow-md flex flex-col justify-between`}>
-            <div className="text-slate-400 text-xs uppercase font-semibold tracking-wider">{m.label}</div>
-            <div className="text-3xl font-extrabold my-2">{m.val}</div>
-            <div className="text-xs text-slate-500">{m.sub}</div>
-          </div>
-        ))}
-      </div>
-
-      {/* Active Queue Table */}
-      <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 shadow-xl">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold text-slate-100">Pending Analyst Review Queue</h2>
-          <span className="text-xs text-slate-400 font-mono">Sorted by Risk Score</span>
-        </div>
-
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm text-slate-300">
-            <thead className="bg-slate-800/60 text-xs text-slate-400 uppercase tracking-wider border-b border-slate-800">
-              <tr>
-                <th className="py-3 px-4">Case ID</th>
-                <th className="py-3 px-4">Transaction ID</th>
-                <th className="py-3 px-4">Risk Level</th>
-                <th className="py-3 px-4">Risk Score</th>
-                <th className="py-3 px-4">Pattern Signature</th>
-                <th className="py-3 px-4">Status</th>
-                <th className="py-3 px-4 text-right">Action</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-800/60">
-              {sampleCases.map(c => (
-                <tr key={c.case_id} className="hover:bg-slate-800/40 transition-colors">
-                  <td className="py-3.5 px-4 font-mono font-semibold text-indigo-400">{c.case_id}</td>
-                  <td className="py-3.5 px-4 font-mono">{c.transaction_id}</td>
-                  <td className="py-3.5 px-4">
-                    <span className={`px-2.5 py-1 rounded-md text-xs font-bold font-mono ${
-                      c.risk_level === 'CRITICAL' ? 'bg-rose-950 text-rose-400 border border-rose-800/60' :
-                      c.risk_level === 'HIGH' ? 'bg-rose-950/60 text-rose-300 border border-rose-800/40' :
-                      c.risk_level === 'MEDIUM' ? 'bg-amber-950 text-amber-400 border border-amber-800/60' :
-                      'bg-emerald-950 text-emerald-400 border border-emerald-800/60'
-                    }`}>
-                      {c.risk_level}
-                    </span>
-                  </td>
-                  <td className="py-3.5 px-4 font-mono font-bold text-slate-200">{c.risk_score.toFixed(2)}</td>
-                  <td className="py-3.5 px-4">
-                    <span className="bg-slate-800 text-slate-300 px-2 py-0.5 rounded text-xs font-mono">
-                      {c.pattern}
-                    </span>
-                  </td>
-                  <td className="py-3.5 px-4">
-                    <span className="text-xs text-amber-400 font-medium">
-                      {c.status.replace('_', ' ')}
-                    </span>
-                  </td>
-                  <td className="py-3.5 px-4 text-right">
-                    <button
-                      onClick={() => onSelectCase(c.case_id)}
-                      className="bg-indigo-600/20 hover:bg-indigo-600/40 text-indigo-300 border border-indigo-500/40 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all"
-                    >
-                      Open Case
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+              <div className="pt-2 border-t border-slate-200 dark:border-[#2a2e37] flex items-center justify-between text-[10px] text-slate-500">
+                <span>{c.evidence_count} Evidence Items</span>
+                <span className="text-teal-600 dark:text-teal-400 font-bold flex items-center">
+                  Open Case <ChevronRight className="w-3 h-3 ml-0.5" />
+                </span>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </div>

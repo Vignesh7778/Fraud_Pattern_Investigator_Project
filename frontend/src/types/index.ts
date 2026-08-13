@@ -46,8 +46,14 @@ export interface ToolExecutionRecord {
 }
 
 export interface InvestigationReport {
+  report_id?: string;
   case_id: string;
   transaction_id: string;
+  investigation_run_id?: string;
+  version: number;
+  is_current: boolean;
+  status?: string;
+
   risk_level: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
   risk_score: number;
   primary_hypothesis: string;
@@ -63,18 +69,49 @@ export interface InvestigationReport {
   generated_at: string;
 }
 
+export interface InvestigationRunRecord {
+  run_id: string;
+  case_id: string;
+  run_number: number;
+  status: 'RUNNING' | 'SUCCESS' | 'FAILED' | 'CANCELLED';
+  trigger_reason: string;
+  step_count: number;
+  started_at: string;
+  completed_at?: string;
+  error_message?: string;
+}
+
 export interface AnalystDecisionRecord {
   decision_id: string;
   case_id: string;
   analyst_id: string;
-  decision: 'CONFIRM_FRAUD' | 'REJECT_FRAUD' | 'REQUEST_MORE_INFO';
+  decision: 'CONFIRM_FRAUD' | 'REJECT_FRAUD' | 'REQUEST_MORE_INFO' | 'ESCALATE';
   notes?: string;
   decided_at: string;
+}
+
+export interface AnalystNoteRecord {
+  note_id: string;
+  case_id: string;
+  author_id: string;
+  note_text: string;
+  created_at: string;
+}
+
+export interface CaseUpdateRecord {
+  update_id: string;
+  case_id: string;
+  author_id: string;
+  update_type: string;
+  description: string;
+  created_at: string;
 }
 
 export interface InvestigationState {
   case_id: string;
   transaction_id: string;
+  run_id?: string;
+  run_number?: number;
   status: string;
   objective: string;
   step_count: number;
@@ -87,6 +124,44 @@ export interface InvestigationState {
   contradictions: EvidenceItem[];
   tool_history: ToolExecutionRecord[];
   report?: InvestigationReport;
+  reports_history?: InvestigationReport[];
   analyst_decision?: AnalystDecisionRecord;
   errors: string[];
+}
+
+export interface CaseRecord {
+  case_id: string;
+  transaction_id: string;
+  title: string;
+  status: 'DRAFT' | 'READY' | 'INVESTIGATING' | 'REPORT_READY' | 'HUMAN_REVIEW' | 'DECIDED' | 'REOPENED' | 'ARCHIVED';
+  risk_score: number;
+  risk_level: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+
+  current_report?: InvestigationReport;
+  reports_history: InvestigationReport[];
+  investigation_runs: InvestigationRunRecord[];
+  evidence: EvidenceItem[];
+  analyst_notes: AnalystNoteRecord[];
+  case_updates: CaseUpdateRecord[];
+  analyst_decision?: AnalystDecisionRecord;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ReportComparisonResult {
+  case_id: string;
+  version_a: number;
+  version_b: number;
+  risk_score_diff: number;
+  risk_level_changed: boolean;
+  risk_level_a: string;
+  risk_level_b: string;
+  primary_hypothesis_a: string;
+  primary_hypothesis_b: string;
+  new_evidence: EvidenceItem[];
+  removed_evidence: EvidenceItem[];
+  new_patterns: string[];
+  removed_patterns: string[];
+  recommendation_a: string;
+  recommendation_b: string;
 }

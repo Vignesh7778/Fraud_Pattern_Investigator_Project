@@ -1,4 +1,5 @@
 import time
+import uuid
 from typing import Dict, Any, List, Tuple, Optional
 from app.domain import (
     InvestigationState, EvidenceItem, PatternFinding, LinkedEntity,
@@ -30,11 +31,25 @@ class InvestigationHarness:
     def __init__(self, max_steps: int = 30):
         self.max_steps = max_steps
 
+    def initialize_case(
+        self,
+        transaction_id: str,
+        case_id: Optional[str] = None,
+        run_number: int = 1,
+        trigger_reason: str = "Initial Investigation"
+    ) -> InvestigationState:
+        cid = case_id or f"CASE-{transaction_id.replace('TXN-', '')}"
+        run_id = f"RUN-{str(uuid.uuid4())[:8]}"
 
-    def initialize_case(self, transaction_id: str) -> InvestigationState:
-        state = InvestigationState(transaction_id=transaction_id, max_steps=self.max_steps)
+        state = InvestigationState(
+            case_id=cid,
+            transaction_id=transaction_id,
+            run_id=run_id,
+            run_number=run_number,
+            max_steps=self.max_steps
+        )
         state.status = "CREATED"
-        logger.info("harness_case_initialized", case_id=state.case_id, transaction_id=transaction_id)
+        logger.info("harness_case_initialized", case_id=state.case_id, transaction_id=transaction_id, run_id=run_id, run_number=run_number)
         return state
 
     async def step(self, state: InvestigationState, user_role: str = "analyst") -> InvestigationState:
@@ -57,7 +72,6 @@ class InvestigationHarness:
                 state.status = "LOAD_CASE"
 
             elif current_status == "LOAD_CASE":
-                # Execute fetch_transaction & fetch_account_history
                 await self._execute_tool_step(state, "fetch_transaction", {"transaction_id": state.transaction_id}, user_role)
                 state.status = "INITIAL_ASSESSMENT"
 
@@ -65,7 +79,6 @@ class InvestigationHarness:
                 state.status = "PLAN"
 
             elif current_status == "PLAN":
-                # Deterministic tool planner logic
                 next_tool, params = self._plan_next_step(state)
                 if next_tool:
                     await self._execute_tool_step(state, next_tool, params, user_role)
@@ -96,9 +109,7 @@ class InvestigationHarness:
                 await self._generate_report(state)
                 state.status = "HUMAN_REVIEW"
 
-
             elif current_status in ["HUMAN_REVIEW", "FINAL_DECISION", "AUDIT", "FAILED"]:
-                # Terminal or pending human action states
                 pass
 
             else:
@@ -108,7 +119,6 @@ class InvestigationHarness:
         except Exception as e:
             logger.error("harness_step_failed", case_id=state.case_id, state=current_status, error=str(e))
             state.errors.append(f"Error during state '{current_status}': {str(e)}")
-            # Fault recovery: attempt to replan or degrade safely rather than crashing
             if current_status not in ["FAILED", "GENERATE_REPORT"]:
                 state.status = "REPLAN"
             else:
@@ -137,8 +147,6 @@ class InvestigationHarness:
                 duration_ms=result["duration_ms"]
             )
             state.tool_history.append(record)
-
-            # Process tool output into evidence
             self._process_tool_output_to_evidence(state, tool_name, out)
 
         except (ToolPermissionError, ToolExecutionError, ValueError) as e:
@@ -159,7 +167,6 @@ class InvestigationHarness:
         if action:
             return action.tool_name, action.required_inputs
         return None, {}
-
 
     def _process_tool_output_to_evidence(self, state: InvestigationState, tool_name: str, out: Dict[str, Any]):
         if tool_name == "fetch_transaction":
@@ -236,10 +243,6 @@ class InvestigationHarness:
         executed_tools = {t.tool_name for t in state.tool_history if t.status == "SUCCESS"}
         return has_txn and has_ml and has_patterns and len(executed_tools) >= 3
 
-
-
-
-
     def _run_contradiction_check(self, state: InvestigationState):
         from app.domain.verification import contradiction_engine
         result = contradiction_engine.analyze_state(state)
@@ -247,13 +250,31 @@ class InvestigationHarness:
         if result.uncertainty_notes:
             state.errors.extend([f"Verification Note: {n}" for n in result.uncertainty_notes])
 
-
     async def _generate_report(self, state: InvestigationState):
         from app.llm import get_llm_provider
         provider = get_llm_provider()
-        report = await provider.generate_report(state)
-        state.report = report
 
+        # Calculate version number based on existing report versions
+        new_version = len(state.reports_history) + 1
+
+        try:
+            report = await provider.generate_report(state)
+            report.version = new_version
+            report.investigation_run_id = state.run_id
+            report.is_current = True
+
+            # Mark previous reports as not current
+            for old_rep in state.reports_history:
+                old_rep.is_current = False
+
+            state.reports_history.append(report)
+            state.report = report  # CURRENT REPORT = latest successful report
+            logger.info("report_generated_successfully", case_id=state.case_id, version=new_version)
+
+        except Exception as e:
+            logger.error("report_generation_failed_preserving_current", case_id=state.case_id, error=str(e))
+            state.errors.append(f"Report generation failed: {str(e)}")
+            # Failed investigation run MUST NOT replace previous successful report!
 
 
 investigation_harness = InvestigationHarness()
