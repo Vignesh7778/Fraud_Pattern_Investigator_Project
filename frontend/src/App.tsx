@@ -78,7 +78,7 @@ const CaseWorkspaceWrapper: React.FC<{
 export const App: React.FC = () => {
   const navigate = useNavigate();
 
-  // Authentication State
+  // Authentication State - Requires Login First
   const [user, setUser] = useState<UserProfile | null>(() => {
     const saved = localStorage.getItem('fpi_user');
     if (saved) {
@@ -88,14 +88,9 @@ export const App: React.FC = () => {
         return null;
       }
     }
-    // Default initial analyst session
-    return {
-      id: 'USR-001',
-      name: 'Sarah Jenkins',
-      email: 'analyst@fpi.io',
-      role: 'analyst'
-    };
+    return null;
   });
+
 
   const [theme, setTheme] = useState<Theme>(() => getStoredTheme());
   const [isIngestionOpen, setIsIngestionOpen] = useState(false);
