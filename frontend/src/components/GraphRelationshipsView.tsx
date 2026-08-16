@@ -45,6 +45,7 @@ export const GraphRelationshipsView: React.FC = () => {
       } catch (err) {
         console.error('Failed to fetch graph topology:', err);
       } finally {
+
         setLoading(false);
       }
     }
@@ -58,11 +59,11 @@ export const GraphRelationshipsView: React.FC = () => {
   return (
     <div className="space-y-6 font-sans">
       {/* Header Banner */}
-      <div className="bg-slate-900/90 dark:bg-[#16191e] border border-slate-200 dark:border-[#2a2e37] rounded-2xl p-6 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4 transition-colors font-mono">
+      <div className="bg-white dark:bg-[#16191e] border border-slate-200 dark:border-[#2a2e37] rounded-2xl p-6 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4 transition-colors font-mono">
         <div>
           <div className="flex items-center space-x-3">
-            <h1 className="text-xl font-bold text-slate-800 dark:text-slate-100">GRAPH RELATIONSHIPS</h1>
-            <span className="bg-slate-100 dark:bg-[#0f1115] text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-[#2a2e37] text-xs px-2.5 py-0.5 rounded-md font-bold">
+            <h1 className="text-xl font-bold text-slate-800 dark:text-slate-100 font-sans">GRAPH RELATIONSHIPS</h1>
+            <span className="bg-slate-100 dark:bg-[#0f1115] text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-[#2a2e37] text-xs px-2.5 py-0.5 rounded-md font-bold font-mono">
               {graphData?.nodes.length || 0} Network Entities
             </span>
           </div>
@@ -73,13 +74,13 @@ export const GraphRelationshipsView: React.FC = () => {
       </div>
 
       {/* Main Graph Grid & Inspector */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 font-sans">
         {/* Interactive Node Graph Grid (2 cols) */}
-        <div className="lg:col-span-2 bg-slate-900/90 dark:bg-[#16191e] border border-slate-200 dark:border-[#2a2e37] rounded-2xl p-6 space-y-4 shadow-sm flex flex-col justify-between">
+        <div className="lg:col-span-2 bg-white dark:bg-[#16191e] border border-slate-200 dark:border-[#2a2e37] rounded-2xl p-6 space-y-4 shadow-sm flex flex-col justify-between transition-colors">
           <div className="flex items-center justify-between border-b border-slate-200 dark:border-[#2a2e37] pb-3">
             <div className="flex items-center space-x-2 font-mono text-xs">
               <Network className="w-4 h-4 text-teal-600 dark:text-teal-400" />
-              <span className="font-bold text-slate-800 dark:text-slate-200">Entity Relationship Topology</span>
+              <span className="font-bold text-slate-800 dark:text-slate-200 font-sans">Entity Relationship Topology</span>
             </div>
             <div className="relative w-48 font-mono">
               <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5" />
@@ -108,14 +109,14 @@ export const GraphRelationshipsView: React.FC = () => {
                   <div
                     key={node.id}
                     onClick={() => setSelectedNode(node)}
-                    className={`p-4 rounded-xl border transition-all cursor-pointer flex flex-col justify-between font-mono ${
+                    className={`p-4 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between font-mono shadow-sm ${
                       isSelected
-                        ? 'bg-teal-950/40 border-teal-600 shadow-sm scale-105'
+                        ? 'bg-teal-50 dark:bg-teal-950/40 border-teal-600 shadow-md scale-105'
                         : isCritical
-                        ? 'bg-rose-950/20 border-rose-800/40 hover:border-rose-600'
+                        ? 'bg-rose-50 dark:bg-rose-950/20 border-rose-200 dark:border-rose-800/40 hover:border-rose-600 text-rose-900 dark:text-rose-200'
                         : isHigh
-                        ? 'bg-orange-950/20 border-orange-800/40 hover:border-orange-600'
-                        : 'bg-slate-100 dark:bg-[#0f1115] border-slate-200 dark:border-[#2a2e37] hover:border-slate-400'
+                        ? 'bg-orange-50 dark:bg-orange-950/20 border-orange-200 dark:border-orange-800/40 hover:border-orange-600 text-orange-900 dark:text-orange-200'
+                        : 'bg-slate-50 dark:bg-[#0f1115] border-slate-200 dark:border-[#2a2e37] hover:border-slate-400 text-slate-800 dark:text-slate-100'
                     }`}
                   >
                     <div className="flex items-center justify-between">
@@ -143,22 +144,22 @@ export const GraphRelationshipsView: React.FC = () => {
         </div>
 
         {/* Entity Inspector Panel (1 col) */}
-        <div className="bg-slate-900/90 dark:bg-[#16191e] border border-slate-200 dark:border-[#2a2e37] rounded-2xl p-6 space-y-4 shadow-sm font-mono flex flex-col justify-between">
+        <div className="bg-white dark:bg-[#16191e] border border-slate-200 dark:border-[#2a2e37] rounded-2xl p-6 space-y-4 shadow-sm font-mono flex flex-col justify-between transition-colors">
           {selectedNode ? (
             <div className="space-y-4">
               <div className="flex items-center justify-between border-b border-slate-200 dark:border-[#2a2e37] pb-3">
-                <span className="text-xs font-bold text-teal-700 dark:text-teal-400">ENTITY DETAILS</span>
-                <button onClick={() => setSelectedNode(null)} className="text-slate-400 hover:text-slate-200">
+                <span className="text-xs font-bold text-teal-700 dark:text-teal-400 font-sans">ENTITY DETAILS</span>
+                <button onClick={() => setSelectedNode(null)} className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
                   <X className="w-4 h-4" />
                 </button>
               </div>
 
               <div>
-                <span className="text-[10px] text-slate-500 uppercase">Entity ID</span>
+                <span className="text-[10px] text-slate-500 uppercase font-sans">Entity ID</span>
                 <div className="text-sm font-bold text-slate-800 dark:text-slate-100 font-mono mt-0.5">{selectedNode.id}</div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3 bg-slate-100 dark:bg-[#0f1115] p-3 rounded-xl border border-slate-200 dark:border-[#2a2e37] text-xs">
+              <div className="grid grid-cols-2 gap-3 bg-slate-50 dark:bg-[#0f1115] p-3 rounded-xl border border-slate-200 dark:border-[#2a2e37] text-xs font-mono">
                 <div>
                   <span className="text-[10px] text-slate-500">Entity Type</span>
                   <div className="text-teal-700 dark:text-teal-400 font-bold">{selectedNode.type}</div>
@@ -170,12 +171,12 @@ export const GraphRelationshipsView: React.FC = () => {
               </div>
 
               <div>
-                <span className="text-[10px] text-slate-500 uppercase">Connected Links in Network</span>
-                <div className="space-y-2 mt-2">
+                <span className="text-[10px] text-slate-500 uppercase font-sans">Connected Links in Network</span>
+                <div className="space-y-2 mt-2 font-mono">
                   {graphData?.links
                     .filter(l => l.source === selectedNode.id || l.target === selectedNode.id)
                     .map((link, idx) => (
-                      <div key={idx} className="bg-slate-100 dark:bg-[#0f1115] p-2.5 rounded-lg border border-slate-200 dark:border-[#2a2e37] text-[11px] space-y-1">
+                      <div key={idx} className="bg-slate-50 dark:bg-[#0f1115] p-2.5 rounded-xl border border-slate-200 dark:border-[#2a2e37] text-[11px] space-y-1">
                         <div className="flex justify-between text-slate-800 dark:text-slate-200 font-bold">
                           <span>{link.source === selectedNode.id ? link.target : link.source}</span>
                           <span className="text-emerald-600 dark:text-emerald-400">{(link.confidence || 0.90) * 100}%</span>
@@ -187,10 +188,10 @@ export const GraphRelationshipsView: React.FC = () => {
               </div>
             </div>
           ) : (
-            <div className="py-20 text-center space-y-3">
+            <div className="py-20 text-center space-y-3 font-sans">
               <Zap className="w-8 h-8 text-slate-400 mx-auto" />
               <div className="text-xs font-bold text-slate-700 dark:text-slate-300">Select any entity node to inspect graph connections</div>
-              <div className="text-[10px] text-slate-500">Clicking nodes highlights multi-hop relationships and confidence scores.</div>
+              <div className="text-[10px] text-slate-500 font-mono">Clicking nodes highlights multi-hop relationships and confidence scores.</div>
             </div>
           )}
         </div>

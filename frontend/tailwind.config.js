@@ -7,19 +7,36 @@ export default {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['Nunito', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+        mono: ['JetBrains Mono', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace']
+      },
       colors: {
-        brand: {
-          50: '#f0f4ff',
-          100: '#e0e7ff',
-          500: '#6366f1',
-          600: '#4f46e5',
-          700: '#4338ca',
-          900: '#1e1b4b',
+        graphite: {
+          50: '#f8fafc',
+          100: '#f1f5f9',
+          800: '#1e2229',
+          900: '#16191e',
+          950: '#0f1115',
         },
-        slate: {
-          850: '#131c2e',
-          900: '#0f172a',
-          950: '#090d16',
+        brand: {
+          50: '#f0fdf4',
+          100: '#dcfce7',
+          500: '#10b981',
+          600: '#059669',
+          700: '#047857',
+          800: '#065f46',
+          900: '#064e3b',
+        },
+        teal: {
+          50: '#f0fdfa',
+          100: '#ccfbf1',
+          500: '#14b8a6',
+          600: '#0d9488',
+          700: '#0f766e',
+          800: '#115e59',
+          900: '#134e4a',
+          950: '#042f2e',
         }
       }
     },

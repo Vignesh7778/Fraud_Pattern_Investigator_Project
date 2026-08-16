@@ -34,7 +34,6 @@ class DecisionRequest(BaseModel):
     notes: Optional[str] = None
 
 
-
 class NoteRequest(BaseModel):
     author_id: str = "ANALYST-001"
     note_text: str
@@ -80,9 +79,6 @@ async def list_global_evidence(
     limit: int = 100,
     offset: int = 0
 ):
-    """
-    Global Evidence Explorer endpoint. Returns persisted evidence across all cases.
-    """
     cases = case_service.list_cases()
     all_evidence: List[EvidenceItem] = []
 
@@ -91,95 +87,104 @@ async def list_global_evidence(
             continue
         all_evidence.extend(c.evidence)
 
-    # Filter
     filtered = all_evidence
     if source_type and source_type != "ALL":
         filtered = [e for e in filtered if e.source_type == source_type]
 
     if query:
         q = query.lower()
-        filtered = [e for e in filtered if q in e.claim.lower() or q in e.evidence_id.lower() or q in e.case_id.lower() or q in e.source_reference.lower()]
+        filtered = [
+            e for e in filtered
+            if q in e.claim.lower() or q in e.case_id.lower() or q in e.evidence_id.lower()
+        ]
 
-    # Paginate
-    paginated = filtered[offset:offset+limit]
-    return [e.model_dump() for e in paginated]
+    return [e.model_dump() for e in filtered[offset : offset + limit]]
 
 
 @router.get("/reports", response_model=List[Dict[str, Any]])
 async def list_global_reports(
     case_id: Optional[str] = None,
-    risk_level: Optional[str] = None
+    risk_level: Optional[str] = None,
+    limit: int = 50
 ):
-    """
-    Global Reports & History endpoint. Returns all report versions across persistent cases.
-    """
     cases = case_service.list_cases()
-    reports_list = []
+    all_reports: List[Dict[str, Any]] = []
 
     for c in cases:
         if case_id and c.case_id != case_id:
             continue
-        for rep in c.reports_history:
-            if risk_level and risk_level != "ALL" and rep.risk_level != risk_level.upper():
-                continue
-            rep_dump = rep.model_dump()
-            rep_dump["case_title"] = c.title
-            rep_dump["analyst_decision"] = c.analyst_decision.model_dump() if c.analyst_decision else None
-            reports_list.append(rep_dump)
 
-    reports_list.sort(key=lambda r: r.get("generated_at", ""), reverse=True)
-    return reports_list
+        for r in c.reports_history:
+            r_dict = r.model_dump()
+            r_dict["case_id"] = c.case_id
+            r_dict["transaction_id"] = c.transaction_id
+            r_dict["is_current"] = (c.current_report and c.current_report.version == r.version)
+            all_reports.append(r_dict)
 
+    if risk_level and risk_level != "ALL":
+        all_reports = [r for r in all_reports if r.get("risk_level") == risk_level]
 
-@router.post("/cases/{case_id}/reinvestigate", response_model=Dict[str, Any])
-async def reinvestigate_case(case_id: str, req: ReinvestigateRequest):
-    try:
-        if req.user_notes:
-            case_service.add_analyst_note(case_id, req.user_notes)
-
-        case = await case_service.run_investigation(case_id, trigger_reason=req.trigger_reason)
-        return case.model_dump()
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Reinvestigation failed: {str(e)}")
-
-
-@router.post("/cases/{case_id}/notes", response_model=Dict[str, Any])
-async def add_analyst_note(case_id: str, req: NoteRequest):
-    try:
-        case = case_service.add_analyst_note(case_id, req.note_text, author_id=req.author_id)
-        return case.model_dump()
-    except KeyError as e:
-        raise HTTPException(status_code=404, detail=str(e))
-
-
-@router.post("/cases/{case_id}/decision", response_model=Dict[str, Any])
-async def submit_human_decision(case_id: str, req: DecisionRequest):
-    try:
-        case = case_service.submit_decision(case_id, decision=req.decision, notes=req.notes, analyst_id=req.analyst_id)
-        return case.model_dump()
-    except KeyError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+    all_reports.sort(key=lambda x: x.get("generated_at", ""), reverse=True)
+    return all_reports[:limit]
 
 
 @router.get("/cases/{case_id}/compare", response_model=Dict[str, Any])
-async def compare_reports(
+async def compare_case_reports(
     case_id: str,
-    v_a: int = Query(..., alias="vA"),
-    v_b: int = Query(..., alias="vB")
+    vA: int = Query(..., alias="vA"),
+    vB: int = Query(..., alias="vB")
 ):
     try:
-        res = case_service.compare_reports(case_id, version_a=v_a, version_b=v_b)
-        return res.model_dump()
-    except (KeyError, ValueError) as e:
+        diff = await case_service.compare_reports(case_id, vA, vB)
+        return diff.model_dump()
+    except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
 
 @router.post("/run", response_model=Dict[str, Any])
 async def run_investigation(req: RunInvestigationRequest):
-    case = await case_service.get_or_create_case(req.transaction_id)
-    if req.force_reinvestigate:
-        case = await case_service.run_investigation(req.transaction_id, trigger_reason=req.trigger_reason or "Forced Reinvestigation")
+    case = await case_service.run_investigation(
+        req.transaction_id,
+        user_role=req.user_role or "analyst",
+        trigger_reason=req.trigger_reason or "API Investigation Trigger"
+    )
     return case.model_dump()
+
+
+@router.post("/cases/{case_id}/reinvestigate", response_model=Dict[str, Any])
+async def reinvestigate_case(case_id: str, req: ReinvestigateRequest):
+    try:
+        case = await case_service.run_investigation(
+            case_id,
+            trigger_reason=req.trigger_reason,
+            user_notes=req.user_notes
+        )
+        return case.model_dump()
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@router.post("/cases/{case_id}/decision", response_model=Dict[str, Any])
+async def submit_human_decision(case_id: str, req: DecisionRequest):
+    try:
+        case = await case_service.submit_decision(
+            case_id=case_id,
+            analyst_id=req.analyst_id,
+            decision=req.decision,
+            notes=req.notes
+        )
+        return case.model_dump()
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@router.post("/cases/{case_id}/notes", response_model=Dict[str, Any])
+async def add_analyst_note(case_id: str, req: NoteRequest):
+    try:
+        case = await case_service.add_note(case_id=case_id, author_id=req.author_id, note_text=req.note_text)
+        return case.model_dump()
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 
 @router.post("/ingest/manual", response_model=Dict[str, Any])
@@ -214,6 +219,7 @@ async def ingest_manual_case(req: ManualIngestionRequest):
 async def ingest_file_case(file: UploadFile = File(...)):
     contents = await file.read()
     filename = file.filename or "evidence.json"
+    lower_fn = filename.lower()
     txn_id = f"TXN-U-{uuid.uuid4().hex[:6].upper()}"
     case_id = f"CASE-{txn_id.replace('TXN-', '')}"
 
@@ -221,7 +227,7 @@ async def ingest_file_case(file: UploadFile = File(...)):
     extracted_claim = f"Uploaded case file '{filename}' ({len(contents)} bytes)."
     extracted_ref: Dict[str, Any] = {"filename": filename, "file_size": len(contents)}
 
-    if filename.endswith(".json"):
+    if lower_fn.endswith(".json"):
         try:
             parsed = json.loads(contents.decode("utf-8"))
             if isinstance(parsed, dict):
@@ -236,6 +242,22 @@ async def ingest_file_case(file: UploadFile = File(...)):
                 extracted_claim = f"JSON Evidence File '{filename}': {parsed.get('description', 'Parsed transaction payload')}"
         except Exception:
             pass
+    elif lower_fn.endswith(".pdf"):
+        file_title = f"PDF Evidence Document: {filename}"
+        extracted_claim = f"PDF Evidence Document '{filename}' ({len(contents)} bytes) ingested for pattern analysis."
+        extracted_ref["document_type"] = "PDF Document"
+    elif lower_fn.endswith(".docx") or lower_fn.endswith(".doc"):
+        file_title = f"Word Evidence Document: {filename}"
+        extracted_claim = f"Microsoft Word Document '{filename}' ({len(contents)} bytes) ingested for pattern analysis."
+        extracted_ref["document_type"] = "Word Document"
+    elif lower_fn.endswith(".csv"):
+        file_title = f"CSV Evidence Data: {filename}"
+        extracted_claim = f"CSV Transaction Dataset '{filename}' ({len(contents)} bytes) ingested."
+        extracted_ref["document_type"] = "CSV Dataset"
+    elif lower_fn.endswith(".txt"):
+        file_title = f"Text Evidence Report: {filename}"
+        extracted_claim = f"Text Evidence Log '{filename}' ({len(contents)} bytes) ingested."
+        extracted_ref["document_type"] = "Text Document"
 
     case = await case_service.get_or_create_case(case_id, title=file_title)
     file_evidence = EvidenceItem(
@@ -249,7 +271,6 @@ async def ingest_file_case(file: UploadFile = File(...)):
     case.evidence.append(file_evidence)
     case = await case_service.run_investigation(case.case_id, trigger_reason=f"File Upload: {filename}", custom_title=file_title)
     return case.model_dump()
-
 
 
 @router.get("/dashboard/stats", response_model=Dict[str, Any])
@@ -327,7 +348,6 @@ async def query_investigation_assistant(req: AssistantQueryRequest):
       "inference": "Repository contains active persistent cases ready for analysis.",
       "recommendation": "Select a specific case from Case Library or enter a Transaction ID."
     }
-
 
 
 # Backwards compatibility legacy routes

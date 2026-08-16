@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Shield, Lock, User, AlertCircle, ArrowRight, CheckCircle2 } from 'lucide-react';
-
+import { Lock, User, AlertCircle, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { FPILogo } from './ui/FPILogo';
 import { loginUser } from '../api/client';
 import { UserProfile } from '../types';
 
@@ -45,14 +45,11 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
       {/* Background Graphic Accents */}
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-teal-600/10 rounded-full blur-3xl pointer-events-none"></div>
 
-      <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-8 max-w-md w-full shadow-2xl space-y-6 relative z-10 font-mono transition-all">
-        {/* Header */}
-        <div className="text-center space-y-2">
-          <div className="w-12 h-12 rounded-2xl bg-teal-600/20 border border-teal-500/30 flex items-center justify-center mx-auto text-teal-400 shadow-md">
-            <Shield className="w-6 h-6" />
-          </div>
-          <h1 className="text-lg font-bold text-slate-100 tracking-wider">FPI CONSOLE</h1>
-          <p className="text-xs text-slate-400 font-sans">
+      <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-8 max-w-md w-full shadow-2xl space-y-6 relative z-10 font-sans transition-all animate-fade-in">
+        {/* Header Branding */}
+        <div className="flex flex-col items-center justify-center text-center space-y-3">
+          <FPILogo variant="full" size="lg" />
+          <p className="text-xs text-slate-400 font-sans mt-1">
             Enterprise AI Fraud Pattern Investigator — Analyst Authentication
           </p>
         </div>
@@ -68,7 +65,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
         {/* Login Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-1">
-            <label className="text-[10px] uppercase font-bold text-slate-400">Analyst ID or Email</label>
+            <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Analyst ID or Email</label>
             <div className="relative">
               <User className="w-4 h-4 text-slate-500 absolute left-3 top-3" />
               <input
@@ -82,7 +79,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
           </div>
 
           <div className="space-y-1">
-            <label className="text-[10px] uppercase font-bold text-slate-400">Security Password</label>
+            <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Security Password</label>
             <div className="relative">
               <Lock className="w-4 h-4 text-slate-500 absolute left-3 top-3" />
               <input
@@ -98,7 +95,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-teal-700 hover:bg-teal-600 text-white font-bold py-3 rounded-xl text-xs flex items-center justify-center space-x-2 shadow-lg shadow-teal-900/30 transition-all font-mono border border-teal-500/30"
+            className="w-full bg-teal-700 hover:bg-teal-600 text-white font-bold py-3 rounded-xl text-xs flex items-center justify-center space-x-2 shadow-lg shadow-teal-900/30 transition-all font-sans border border-teal-500/30"
           >
             {loading ? (
               <span>Authenticating Session...</span>
@@ -113,15 +110,15 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
 
         {/* Quick Demo Presets */}
         <div className="pt-4 border-t border-slate-800 space-y-2">
-          <div className="text-[10px] uppercase font-bold text-slate-500 text-center">Quick Preset Accounts</div>
-          <div className="grid grid-cols-1 gap-2 text-xs font-mono">
+          <div className="text-[10px] uppercase font-bold text-slate-500 text-center tracking-wider">Quick Preset Accounts</div>
+          <div className="grid grid-cols-1 gap-2 text-xs font-sans">
             <button
               onClick={() => handleQuickPreset('USR-001', 'analyst123')}
               className="p-2.5 bg-slate-950/60 hover:bg-slate-800/80 border border-slate-800 rounded-xl text-left flex items-center justify-between transition-all group"
             >
               <div>
                 <div className="text-slate-200 font-bold">Sarah Jenkins</div>
-                <div className="text-[10px] text-slate-500">ID: USR-001 • Lead Fraud Analyst</div>
+                <div className="text-[10px] text-slate-500 font-mono">ID: USR-001 • Lead Fraud Analyst</div>
               </div>
               <CheckCircle2 className="w-3.5 h-3.5 text-teal-400 opacity-60 group-hover:opacity-100" />
             </button>
@@ -132,7 +129,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
             >
               <div>
                 <div className="text-slate-200 font-bold">Marcus Vance</div>
-                <div className="text-[10px] text-slate-500">ID: USR-002 • Senior Compliance Auditor</div>
+                <div className="text-[10px] text-slate-500 font-mono">ID: USR-002 • Senior Compliance Auditor</div>
               </div>
               <CheckCircle2 className="w-3.5 h-3.5 text-teal-400 opacity-60 group-hover:opacity-100" />
             </button>

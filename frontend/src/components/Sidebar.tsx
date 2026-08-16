@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { FPILogo } from './ui/FPILogo';
 import {
   Shield, LayoutDashboard, Briefcase, FileText, Network, FileSpreadsheet,
   Activity, PlusCircle, CheckCircle2, BarChart3, ChevronLeft, ChevronRight, X
@@ -53,23 +54,19 @@ export const Sidebar: React.FC<SidebarProps> = ({
       collapsed ? 'lg:w-16' : 'lg:w-64'
     } w-64`}>
       <div>
-        {/* Brand Header */}
+        {/* Brand Header with FPILogo */}
         <div className="p-4 border-b border-slate-200 dark:border-[#2a2e37] flex items-center justify-between">
           <div
             onClick={() => {
               navigate('/cases');
               if (onCloseMobile) onCloseMobile();
             }}
-            className="flex items-center space-x-3 cursor-pointer"
+            className="flex items-center space-x-2 cursor-pointer overflow-hidden"
           >
-            <div className="w-8 h-8 rounded-xl bg-teal-700 dark:bg-teal-600 flex items-center justify-center shadow-md text-white font-bold shrink-0">
-              <Shield className="w-4 h-4" />
-            </div>
-            {(!collapsed || isMobileOpen) && (
-              <div>
-                <div className="font-extrabold text-slate-800 dark:text-slate-100 text-xs tracking-wider font-mono">FPI CONSOLE</div>
-                <div className="text-[9px] text-slate-500 font-mono">Enterprise AI Investigator</div>
-              </div>
+            {collapsed && !isMobileOpen ? (
+              <FPILogo variant="mark" size="sm" />
+            ) : (
+              <FPILogo variant="full" size="sm" />
             )}
           </div>
 
@@ -101,22 +98,22 @@ export const Sidebar: React.FC<SidebarProps> = ({
               onOpenIngestModal();
               if (onCloseMobile) onCloseMobile();
             }}
-            className={`w-full bg-teal-700 hover:bg-teal-600 text-white font-semibold py-2 px-3 rounded-xl text-xs flex items-center justify-center space-x-2 shadow-sm transition-all border border-teal-600/30 font-mono ${
+            className={`w-full bg-teal-700 hover:bg-teal-600 text-white font-semibold py-2.5 px-3 rounded-xl text-xs flex items-center justify-center space-x-2 shadow-sm transition-all border border-teal-600/30 font-sans ${
               collapsed ? 'lg:px-0' : ''
             }`}
             title="Start New Investigation Case"
           >
             <PlusCircle className="w-4 h-4 shrink-0" />
-            {(!collapsed || isMobileOpen) && <span>+ New Investigation</span>}
+            {(!collapsed || isMobileOpen) && <span>+ New Case</span>}
           </button>
         </div>
 
         {/* Navigation Sections */}
-        <div className="px-2 space-y-4 mt-2 overflow-y-auto max-h-[calc(100vh-220px)]">
+        <div className="px-2 space-y-4 mt-2 overflow-y-auto max-h-[calc(100vh-220px)] font-sans">
           {navigationSections.map((section) => (
             <div key={section.title} className="space-y-1">
               {(!collapsed || isMobileOpen) && (
-                <div className="px-3 text-[9px] font-mono font-bold text-slate-400 uppercase tracking-wider">
+                <div className="px-3 text-[10px] font-sans font-bold text-slate-400 uppercase tracking-wider">
                   {section.title}
                 </div>
               )}
@@ -134,7 +131,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                       if (onCloseMobile) onCloseMobile();
                     }}
                     title={collapsed ? item.label : undefined}
-                    className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-all ${
+                    className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-all ${
                       isActive
                         ? 'bg-teal-50 dark:bg-teal-950/50 text-teal-700 dark:text-teal-400 border border-teal-200 dark:border-teal-800/40 font-bold'
                         : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-[#1e2229]'
@@ -159,13 +156,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
       {/* System Footer */}
       {(!collapsed || isMobileOpen) && (
-        <div className="p-3 border-t border-slate-200 dark:border-[#2a2e37] bg-slate-50 dark:bg-[#0f1115] text-xs space-y-2 font-mono">
+        <div className="p-3 border-t border-slate-200 dark:border-[#2a2e37] bg-slate-50 dark:bg-[#0f1115] text-xs space-y-2 font-sans">
           <div className="flex items-center justify-between text-[10px] text-slate-500">
-            <span className="flex items-center space-x-1.5">
+            <span className="flex items-center space-x-1.5 font-mono">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
               <span>Supabase Cloud DB</span>
             </span>
-            <span className="text-emerald-600 dark:text-emerald-400 text-[10px] font-bold">Connected</span>
+            <span className="text-emerald-600 dark:text-emerald-400 text-[10px] font-bold font-mono">Connected</span>
           </div>
           <div className="bg-slate-100 dark:bg-[#16191e] p-2 rounded-xl border border-slate-200 dark:border-[#2a2e37] flex items-center justify-between">
             <div>
