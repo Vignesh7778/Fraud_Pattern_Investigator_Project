@@ -178,7 +178,7 @@ class CaseService:
 
     async def get_or_create_case(self, case_id_or_txn_id: str, title: Optional[str] = None) -> CaseRecord:
         for case in CASE_REPOSITORY.values():
-            if case.case_id == case_id_or_txn_id or case.transaction_id == case_id_or_txn_id:
+            if case.case_id.upper() == case_id_or_txn_id.upper() or case.transaction_id.upper() == case_id_or_txn_id.upper():
                 if title and case.title.startswith("Investigation for"):
                     case.title = title
                 return case
@@ -261,6 +261,9 @@ class CaseService:
         return cases
 
     async def get_case(self, case_id: str) -> Optional[CaseRecord]:
+        for c in CASE_REPOSITORY.values():
+            if c.case_id.upper() == case_id.upper() or c.transaction_id.upper() == case_id.upper():
+                return c
         return CASE_REPOSITORY.get(case_id)
 
     async def run_investigation(
@@ -334,7 +337,14 @@ class CaseService:
         decision: str = "CONFIRM_FRAUD",
         notes: Optional[str] = None
     ) -> CaseRecord:
-        case = CASE_REPOSITORY.get(case_id)
+        case = None
+        for c in CASE_REPOSITORY.values():
+            if c.case_id.upper() == case_id.upper() or c.transaction_id.upper() == case_id.upper():
+                case = c
+                break
+        if not case:
+            case = CASE_REPOSITORY.get(case_id)
+
         if not case:
             raise ValueError(f"Case '{case_id}' not found.")
 
@@ -364,7 +374,14 @@ class CaseService:
         return case
 
     def add_note(self, case_id: str, author_id: str, note_text: str) -> CaseRecord:
-        case = CASE_REPOSITORY.get(case_id)
+        case = None
+        for c in CASE_REPOSITORY.values():
+            if c.case_id.upper() == case_id.upper() or c.transaction_id.upper() == case_id.upper():
+                case = c
+                break
+        if not case:
+            case = CASE_REPOSITORY.get(case_id)
+
         if not case:
             raise ValueError(f"Case '{case_id}' not found.")
 
@@ -384,7 +401,14 @@ class CaseService:
         return self.add_note(case_id=case_id, author_id=author_id, note_text=note_text)
 
     def compare_reports(self, case_id: str, version_a: int = 1, version_b: int = 2) -> ReportComparisonResult:
-        case = CASE_REPOSITORY.get(case_id)
+        case = None
+        for c in CASE_REPOSITORY.values():
+            if c.case_id.upper() == case_id.upper() or c.transaction_id.upper() == case_id.upper():
+                case = c
+                break
+        if not case:
+            case = CASE_REPOSITORY.get(case_id)
+
         if not case:
             raise ValueError(f"Case '{case_id}' not found.")
 
@@ -395,7 +419,6 @@ class CaseService:
         rep_B = next((r for r in case.reports_history if r.version == vB), None)
 
         if not rep_A or not rep_B:
-            # Create synthetic comparison fallback for testing
             return ReportComparisonResult(
                 case_id=case_id,
                 version_a=vA,
