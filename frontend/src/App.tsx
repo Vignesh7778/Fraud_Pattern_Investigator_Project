@@ -78,9 +78,13 @@ const CaseWorkspaceWrapper: React.FC<{
 export const App: React.FC = () => {
   const navigate = useNavigate();
 
-  // Authentication State - Requires Login First
+  // Authentication State - Uses sessionStorage so closing app tab/window forces fresh login
   const [user, setUser] = useState<UserProfile | null>(() => {
-    const saved = localStorage.getItem('fpi_user');
+    // Clear legacy persistent storage to enforce fresh login on app close
+    localStorage.removeItem('fpi_user');
+    localStorage.removeItem('fpi_user_token');
+
+    const saved = sessionStorage.getItem('fpi_user');
     if (saved) {
       try {
         return JSON.parse(saved);
@@ -110,13 +114,15 @@ export const App: React.FC = () => {
 
   const handleLoginSuccess = (userProfile: UserProfile, token: string) => {
     setUser(userProfile);
-    localStorage.setItem('fpi_user', JSON.stringify(userProfile));
-    localStorage.setItem('fpi_user_token', token);
+    sessionStorage.setItem('fpi_user', JSON.stringify(userProfile));
+    sessionStorage.setItem('fpi_user_token', token);
     navigate('/');
   };
 
   const handleLogout = () => {
     setUser(null);
+    sessionStorage.removeItem('fpi_user');
+    sessionStorage.removeItem('fpi_user_token');
     localStorage.removeItem('fpi_user');
     localStorage.removeItem('fpi_user_token');
   };
